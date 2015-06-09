@@ -1,3 +1,4 @@
+/* forged dataset */
 var ypts = new Array();
 for (var i = 0; i <= 1000; i++) ypts.push(i * i);
 
@@ -142,41 +143,39 @@ $(function () {
 		});
 	});
 
-	/*
 	$('#add-series').click(function() {
-		var prevContent = $('.select').detach();
-		var submitName = "Enter series name <input type = 'text' id = 'enter-sname'>"
-		var submitSeries = "Enter data separated by commas <input type = 'text' id = 'enter-series'> <br/> <button id = 'submit-series'>Submit</button>"
-		buttons.prepend(submitName + "<br/>" + submitSeries);
+		mainSelect.invisible();
+		$('#set-new-series').visible();
 
-		$('#submit-series').click(function() {
-			var newName = $('#enter-sname').val();
-			var dataStr = $('#enter-series').val();
-			var newSeries = parseData(dataStr);
+		$('#submit-new-series').click(function() {
+			var newName = $('#enter-new-name').val();
+			var dataAsStr = $('#enter-data').val();
+			var newSeries = parseData(dataAsStr);
 
 			if (newSeries.length > 0) {
 				chart.addSeries({
-					data: newSeries,
 					id: newName,
-					name: newName
+					name: newName,
+					data: newSeries
 				});
 			} else {
 				alert("Invalid series");
 			}
 			
-			buttons.empty();
-			buttons.prepend(prevContent);
+			$('#set-new-series').invisible();
+			mainSelect.visible();
 		});
-	});*/
+	});
 });
 
 /* aux functions */
 function parseData(str) {
 	var strArr = str.split(',');
+	console.log(strArr);
 	var series = new Array();	
 	for (var i = 0; i < strArr.length; i++) {
-		var next = parseInt(strArr[i]);
-		//if (next == NaN) return [];
+		var next = parseInt(strArr[i]); // this function is weird, maybe replace
+		if (isNaN(next)) return [];
 		series.push(next);
 	}
 	return series;
