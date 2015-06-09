@@ -52,6 +52,11 @@ $(function () {
 	var series = chart.series[0];
 	var mainSelect = $('#buttons-main');
 
+	$('div #cancel').click(function() {
+		$('.edit').invisible();
+		mainSelect.visible();
+	});
+
 	$('#set-title').click(function() {
 		mainSelect.invisible();
 		$('#edit-title').visible();
@@ -98,7 +103,7 @@ $(function () {
 			var ylabel = $('#enter-y').val();
 			var xcolor = $('#enter-x-color').val();
 			var ycolor = $('#enter-y-color').val();
-
+			
 			chart.xAxis[0].setTitle({ text: xlabel });
 			chart.yAxis[0].setTitle({ text: ylabel });
 			chart.xAxis[0].setTitle({ style: { color: xcolor }});
