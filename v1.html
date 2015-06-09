@@ -13,6 +13,7 @@
 	<body>
 		<div id="container"> </div>
 		
+		<!-- main menu -->
 		<div id = "buttons-main" class = "wrapper">
 			<button id = "set-title">Set title</button>
 			<button id = "set-background">Set background</button>
@@ -21,12 +22,27 @@
 			<button id = "add-series">Add dataset</button>
 		</div>
 
-		<div id = "edit-title" class = "wrapper">
+		<!-- title settings area -->
+		<div id = "edit-title" class = "edit">
 			<p> Change title to <input type = 'text' id = 'enter-title'> </p>
 			<p> Change color to <input type = 'color' id = 'enter-color'> </p>
 			<button id = 'submit-title'>Submit</button>
 		</div>
-	
+
+		<!-- background settings area -->
+		<div id = "edit-background" class = "edit">
+			<p> Change background color to <input type = 'color' id = 'enter-bcolor'> </p>
+			<button id = 'submit-color'>Submit</button>
+		</div>
+
+		<!-- axis settings area -->
+		<div id = "edit-axes" class = "edit">
+			<p> Change x-axis title to <input type = 'text' id = 'enter-x'> Change y-axis title to <input type = 'text' id = 'enter-y'> </p>
+			<p> Change x-axis color to <input type = 'color' id = 'enter-x-color'> Change y-axis color to <input type = 'color' id = 'enter-y-color'> </p>
+			<button id = 'submit-axes'>Submit</button>
+		</div>
+
+		<!-- main script -->
 		<script src = "charts.js"></script>
 	</body>
 </html>

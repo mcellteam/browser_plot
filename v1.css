@@ -11,6 +11,13 @@
 	font-size: 13px;
 }
 
+.edit {
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 13px;
+	display: none;
+}
+
 button {
 	font-size: 13px;
 }

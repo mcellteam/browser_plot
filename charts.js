@@ -4,12 +4,12 @@ for (var i = 0; i <= 1000; i++) ypts.push(i * i);
 (function($) {
     $.fn.invisible = function() {
         return this.each(function() {
-            $(this).css("visibility", "hidden");
+            $(this).css("display", "none");
         });
     };
     $.fn.visible = function() {
         return this.each(function() {
-            $(this).css("visibility", "visible");
+            $(this).css("display", "block");
         });
     };
 }(jQuery));
@@ -52,8 +52,6 @@ $(function () {
 	var series = chart.series[0];
 	var mainSelect = $('#buttons-main');
 
-	$('#edit-title').invisible();
-
 	$('#set-title').click(function() {
 		mainSelect.invisible();
 		$('#edit-title').visible();
@@ -73,48 +71,45 @@ $(function () {
 		});
 	});
 
-	/*
 	$('#set-background').click(function() {
-		var prevContent = $('.select').detach();
-		var submitColor = "Change background color to <input type = 'color' id = 'enter-color'>";
-		var submitButton = "<button id = 'submit-color'>Submit</button>";
-		buttons.prepend(submitColor + '<br/>' + submitButton);
+		mainSelect.invisible();
+		$('#edit-background').visible();
+
+		$('#enter-bcolor').val(chart.options.chart.backgroundColor);
 
 		$('#submit-color').click(function() {
-			var newColor = $('#enter-color').val();
-			if (newColor != "") {
-				chart.chartBackground.css({ color: newColor });
-			}
+			var newColor = $('#enter-bcolor').val();
+			chart.chartBackground.css({ color: newColor });
 
-			buttons.empty();
-			buttons.prepend(prevContent);
+			$('#edit-background').invisible();
+			mainSelect.visible();
 		});
 	});
 
 	$('#set-axes').click(function() {
-		var prevContent = $('.select').detach();
-		var submitNameX = "Change x-axis title to <input type = 'text' id = 'enter-x'>";
-		var submitNameY = "Change y-axis title to <input type = 'text' id = 'enter-y'>";
-		var submitColorX = "Change x-axis color to <input type = 'color' id = 'enter-x-color'>";
-		var submitColorY = "Change y-axis color to <input type = 'color' id = 'enter-y-color'>";
-		var submitButton = "<button id = 'submit-axes'>Submit</button>";
-		buttons.prepend(submitNameX + submitNameY + '<br/>' + submitColorX + submitColorY + '<br/>' + submitButton);
+		mainSelect.invisible();
+		$('#edit-axes').visible();
+
+		$('#enter-x').val(chart.options.xAxis[0].title.text);
+		$('#enter-y').val(chart.options.yAxis[0].title.text);
+		
 		$('#submit-axes').click(function() {
 			var xlabel = $('#enter-x').val();
 			var ylabel = $('#enter-y').val();
 			var xcolor = $('#enter-x-color').val();
 			var ycolor = $('#enter-y-color').val();
 
-			if (xlabel != "") chart.xAxis[0].setTitle({ text: xlabel });
-			if (ylabel != "") chart.yAxis[0].setTitle({ text: ylabel });
-			if (xcolor != "") chart.xAxis[0].setTitle({ style: { color: xcolor }});
-			if (ycolor != "") chart.yAxis[0].setTitle({ style: { color: ycolor }});
-
-			buttons.empty();
-			buttons.prepend(prevContent);
+			chart.xAxis[0].setTitle({ text: xlabel });
+			chart.yAxis[0].setTitle({ text: ylabel });
+			chart.xAxis[0].setTitle({ style: { color: xcolor }});
+			chart.yAxis[0].setTitle({ style: { color: ycolor }});
+		
+			$('#edit-axes').invisible();
+			mainSelect.visible();
 		});
 	});
 
+	/*
 	$('#set-lines').click(function() {
 		var prevContent = $('.select').detach();
 		var submitName = "Series name <input type = 'text' id = 'enter-series-name'>";
