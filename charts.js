@@ -114,44 +114,35 @@ $(function () {
 		});
 	});
 
-	/*
 	$('#set-lines').click(function() {
-		var prevContent = $('.select').detach();
-		var submitName = "Series name <input type = 'text' id = 'enter-series-name'>";
-		var submitColor = "Change line color to <input type = 'color' id = 'enter-line-color'>";
-		var submitWidth = "Change thickness to <select name = 'line-width' id = 'enter-thickness'>" +
-		"<option value = 'thin'>Thin</option>" +
-		"<option value = 'norm'>Normal</option>" +
-		"<option value = 'thick'>Thick</option>";
-		var submitButton = "<input id = 'submit-lines' type = 'submit'></input>";
-		buttons.prepend(submitName + '<br/>' + submitColor + '<br/>' + submitWidth + '<br></br>' + submitButton);
-		$('#submit-lines').click(function() {
-			var curName = $('#enter-series-name').val();
-			var newColor = $('#enter-line-color').val();
-			var thickness = $('#enter-thickness').val();
-			var series = chart.get(curName);
+		mainSelect.invisible();
+		$('#edit-series-display').visible();
 
+		$('#submit-series-display').click(function() {
+			var curName = $('#enter-series-name').val();
+			var newColor = $('#enter-series-color').val();
+			var thickness = $('#enter-thickness').val();
+
+			var series = chart.get(curName);
 			if (series == null) {
-				alert("Please enter a valid series name.");
+				alert("Please choose a valid series.");
 			} else {
-				if (newColor != "") {
-					series.update({ color: newColor });
-				}
+				series.update({ color: newColor });
 			
 				function toWidth(thicknessOption) {
 					if (thicknessOption == "thin") return 2;
 					else if (thicknessOption == "normal") return 5;
 					return 10;
 				}
-
 				series.update({ lineWidth: toWidth(thickness) });
-			}
 
-			buttons.empty();
-			buttons.prepend(prevContent);
+				$('#edit-series-display').invisible();
+				mainSelect.visible();
+			}
 		});
 	});
 
+	/*
 	$('#add-series').click(function() {
 		var prevContent = $('.select').detach();
 		var submitName = "Enter series name <input type = 'text' id = 'enter-sname'>"
