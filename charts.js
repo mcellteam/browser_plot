@@ -1,6 +1,19 @@
 var ypts = new Array();
 for (var i = 0; i <= 1000; i++) ypts.push(i * i);
 
+(function($) {
+    $.fn.invisible = function() {
+        return this.each(function() {
+            $(this).css("visibility", "hidden");
+        });
+    };
+    $.fn.visible = function() {
+        return this.each(function() {
+            $(this).css("visibility", "visible");
+        });
+    };
+}(jQuery));
+
 $(function () { 
 	$('#container').highcharts({
 		chart: {
@@ -37,34 +50,31 @@ $(function () {
 
 	var chart = $('#container').highcharts();
 	var series = chart.series[0];
+	var mainSelect = $('#buttons-main');
 
-	var buttons = $('#select-buttons');
+	$('#edit-title').invisible();
 
-	$('#change-title').click(function() {
-		var prevContent = $('.select').detach();
+	$('#set-title').click(function() {
+		mainSelect.invisible();
+		$('#edit-title').visible();
 
-		// Enter new settings
-		var submitName = "Change title to <input type = 'text' id = 'enter-title'>";
-		var submitColor = "Change color to <input type = 'color' id = 'enter-color'>";
-		var submitButton = "<button id = 'submit-title'>Submit</button>";
-		buttons.prepend(submitName + '<br/>' + submitColor + '<br/>' + submitButton);
+		$('#enter-title').val(chart.options.title.text);
+		$('#enter-color').val(chart.options.title.style.color);
 
-		// make changes
 		$('#submit-title').click(function() {
-			var newTitle = $('#enter-title').val();	
-			if (newTitle != "")
-				chart.setTitle({ text: newTitle });
-
+			var newTitle = $('#enter-title').val();
 			var newColor = $('#enter-color').val();
-			if (newColor != "")
-				chart.setTitle({ style: { color: newColor }});
 
-			buttons.empty();
-			buttons.prepend(prevContent);
+			chart.setTitle({ text: newTitle });
+			chart.setTitle({ style: { color: newColor }});
+
+			$('#edit-title').invisible();
+			mainSelect.visible();
 		});
 	});
 
-	$('#change-background').click(function() {
+	/*
+	$('#set-background').click(function() {
 		var prevContent = $('.select').detach();
 		var submitColor = "Change background color to <input type = 'color' id = 'enter-color'>";
 		var submitButton = "<button id = 'submit-color'>Submit</button>";
@@ -81,7 +91,7 @@ $(function () {
 		});
 	});
 
-	$('#change-axes').click(function() {
+	$('#set-axes').click(function() {
 		var prevContent = $('.select').detach();
 		var submitNameX = "Change x-axis title to <input type = 'text' id = 'enter-x'>";
 		var submitNameY = "Change y-axis title to <input type = 'text' id = 'enter-y'>";
@@ -105,7 +115,7 @@ $(function () {
 		});
 	});
 
-	$('#change-lines').click(function() {
+	$('#set-lines').click(function() {
 		var prevContent = $('.select').detach();
 		var submitName = "Series name <input type = 'text' id = 'enter-series-name'>";
 		var submitColor = "Change line color to <input type = 'color' id = 'enter-line-color'>";
@@ -152,9 +162,6 @@ $(function () {
 			var newName = $('#enter-sname').val();
 			var dataStr = $('#enter-series').val();
 			var newSeries = parseData(dataStr);
-		
-			/* validate newSeries */			
-			/* ***** */
 
 			if (newSeries.length > 0) {
 				chart.addSeries({
@@ -169,7 +176,7 @@ $(function () {
 			buttons.empty();
 			buttons.prepend(prevContent);
 		});
-	});
+	});*/
 });
 
 /* aux functions */
