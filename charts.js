@@ -147,7 +147,10 @@ $(function () {
 		mainSelect.invisible();
 		$('#set-new-series').visible();
 
-		$('#submit-new-series').click(function() {
+		$('#enter-new-name').val("");
+		$('#enter-data').val("");
+
+		$('#submit-new-series').unbind().click(function() {
 			var newName = $('#enter-new-name').val();
 			var dataAsStr = $('#enter-data').val();
 			var newSeries = parseData(dataAsStr);
@@ -158,6 +161,16 @@ $(function () {
 					name: newName,
 					data: newSeries
 				});
+			
+				$('#enter-series-name').append($('<option>', {
+					value: newName,
+					text: newName
+				}));
+
+				$('#series-selected').append($('<option>', {
+					value: newName,
+					text: newName
+				}));
 			} else {
 				alert("Invalid series");
 			}
@@ -166,12 +179,64 @@ $(function () {
 			mainSelect.visible();
 		});
 	});
+
+	function performSeriesAction(action, seriesList) {
+		$.each(seriesList, function(key, val) {
+			if (action === "show") {
+				chart.get(val).show();
+			} else if (action === "hide") {
+				chart.get(val).hide();
+			} else if (action === "delete") {
+				chart.get(val).remove();
+
+				$('#enter-series-name option').each(function() {
+					if ($(this).val() === val)
+						$(this).remove();
+				});
+
+				$('#series-selected option').each(function() {
+					if ($(this).val() === val)
+						$(this).remove();
+				});
+			}
+		});
+	}
+
+	var selectedSeries, selectedAction;
+	$('#series-bulk').click(function() {
+		mainSelect.invisible();
+		$('#pre-select').visible();
+		
+		$('#from-list').click(function() {
+			$('#pre-select').invisible();
+			$('#select-series').visible();
+
+			$('#submit-series-select').unbind().click(function() {
+				selectedAction = $('#action-selected').val();
+				selectedSeries = $('#series-selected').val();
+
+				performSeriesAction(selectedAction, selectedSeries);
+
+				$('#select-series').invisible();
+				mainSelect.visible();
+			});
+		});
+
+		$('#from-regex').click(function() {
+			$('#pre-select').invisible();
+			$('#search-series').visible();
+		});
+
+		$('#cancel').click(function() {
+			$('#series-bulk').invisible();
+			mainSelect.visible();
+		});
+	});
 });
 
 /* aux functions */
 function parseData(str) {
 	var strArr = str.split(',');
-	console.log(strArr);
 	var series = new Array();	
 	for (var i = 0; i < strArr.length; i++) {
 		var next = parseInt(strArr[i]); // this function is weird, maybe replace

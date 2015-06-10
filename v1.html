@@ -5,6 +5,7 @@
 		<title>Highchart</title>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<script src="http://code.highcharts.com/highcharts.js"></script>
+		<script src="http://code.highcharts.com/modules/exporting.js"></script>
 		<link rel="stylesheet", type="text/css", a href = "v1.css" />
 		<script src='http://bgrins.github.io/spectrum/spectrum.js'></script>
 		<link rel='stylesheet' href='http://bgrins.github.io/spectrum/spectrum.css' />
@@ -20,6 +21,7 @@
 			<button id = "set-axes">Set axis titles</button>
 			<button id = "set-lines">Line settings</button>
 			<button id = "add-series">Add dataset</button>
+			<button id = "series-bulk">Select series</button>
 		</div>
 
 		<!-- title settings area -->
@@ -27,7 +29,6 @@
 			<p> Change title to <input type = 'text' id = 'enter-title'> </p>
 			<p> Change color to <input type = 'color' id = 'enter-color'> </p>
 			<button id = 'submit-title'>Submit</button>
-
 			<button id = 'cancel'>Cancel</button>
 		</div>
 
@@ -44,6 +45,7 @@
 			<p> Change x-axis title to <input type = 'text' id = 'enter-x'> Change y-axis title to <input type = 'text' id = 'enter-y'> </p>
 			<p> Change x-axis color to <input type = 'color' id = 'enter-x-color'> Change y-axis color to <input type = 'color' id = 'enter-y-color'> </p>
 			<button id = 'submit-axes'>Submit</button>
+			<button id = 'cancel'>Cancel</button>
 		</div>
 
 		<!-- series display settings area -->
@@ -70,6 +72,47 @@
 			<p> Series name <input type = 'text' id = 'enter-new-name'> </p>
 			<p> Comma-separated data <input type = 'text' id = 'enter-data'> </p>
 			<button id = 'submit-new-series'>Submit</button>
+			<button id = 'cancel'>Cancel</button>
+		</div>
+
+		<!-- series selection area -->
+		<div id = 'pre-select' class = "edit">
+			<button id = 'from-list'>Select from list</button>
+			<button id = 'from-regex'>Search for series</button>
+			<button id = 'cancel'>Cancel</button>
+		</div>
+
+		<!-- from list -->
+		<div id = 'select-series' class = 'edit'>
+			<p> Select action
+				<select id = 'action-selected'>
+					<option value = 'show'>Show</option>
+					<option value = 'hide'>Hide</option>
+					<option value = 'delete'>Delete</option>
+				</select>
+			</p>
+
+			<p> Select series
+				<select id = 'series-selected' multiple>
+					<option value = 'Molecule'>Molecule</option>
+				</select>
+			</p>
+
+			<button id = 'submit-series-select'>Submit</button>
+			<button id = 'cancel'>Cancel</button>
+		</div>
+
+		<!-- from regex -->
+		<div id = 'search-series' class = 'edit'>
+			<p> Select action
+				<select id = 'action-selected'>
+					<option value = 'show'>Show</option>
+					<option value = 'hide'>Hide</option>
+					<option value = 'delete'>Delete</option>
+				</select>
+			</p>
+			<p> Search <input type = 'text' id = 'series-by-regex'> </p>
+			<button id = 'submit-series-select'>Submit</button>
 			<button id = 'cancel'>Cancel</button>
 		</div>
 
