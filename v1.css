@@ -1,4 +1,4 @@
-* {
+body {
 	font-family: sans-serif;
 }
 
@@ -8,16 +8,11 @@
 	margin-left: 15%;
 	margin-top: 2%;
 	margin-bottom: 1%
+	text-align: center;
+	padding: 20px;
 }
 
-/* label regions
-.chart-title {
-	background-color: green;
-    color: #fff;
-    padding: 10px;
-    float: left;
-}*/
-
+/* label setting windows */
 .edit {
 	background-color: #FCF79F;
 	position: absolute;
@@ -35,4 +30,39 @@
 button {
 	font-size: 13px;
 	margin-top: 5px;
+}
+
+/* bottom-left */
+#chart-ctrl {
+	text-align: center;
+	width: 40%;
+	margin-left: 5%;
+	float: left;
+	border: 5px solid #e8eaeb;
+	padding: 5px;
+	font-size: 12px;
+}
+
+.plot-range {
+	width: 60px;
+}
+
+#chart-ctrl span {
+	margin-left: 20px;
+}
+
+.edit-display {
+	padding: 5px;
+	display: none;
+}
+
+.chart-range {
+	min: 0;
+	max: 100;
+}
+
+/* bottom-right */
+#series-ctrl {
+	width: 55%;
+	float: right;
 }

@@ -44,6 +44,44 @@
 			<button id = 'cancel'>Cancel</button>
 		</div>
 
+		<!-- bottom left -->
+		<div id = "chart-ctrl">
+			<button class = "plot-option" id = "show-dim">Dimensions</button> <span/>
+			<button class = "plot-option" id = "show-display">Chart display</button>
+			<br/>
+			
+			<div class = "edit-display" id = "dim">
+			<b>Plot: x</b> from
+				<input class = "plot-range" type = "number"> to
+				<input class = "plot-range" type = "number"> 
+			<span/> <b>y</b> from
+				<input class = "plot-range" type = "number"> to
+				<input class = "plot-range" type = "number">
+			<br/><br/>
+
+			<b>Chart height:</b>
+			<input class = "chart-range" type = "range">
+			<span/> <b>Chart width:</b>
+			<input class = "chart-range" type = "range">
+			<br/>
+			<button>Update</button>
+			</div>
+
+			<div class = "edit-display" id = "disp">
+				<b>Chart background</b>
+				<input class = "chart-display" type = "color">
+				<br/><br/><b>Plot background</b>
+				<input class = "chart-display" type = "color">
+				<br/>
+				<button>Update</button>
+			</div>
+		</div>
+
+		<!-- bottom right -->
+		<div id = "series-ctrl">
+			<button></button>
+		</div>
+
 		<!-- main script -->
 		<script src = "charts.js"></script>
 	</body>
