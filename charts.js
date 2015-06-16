@@ -15,7 +15,6 @@ for (var i = 0; i <= 1000; i++) ypts.push(i * i);
     };
 
 	$.fn.hidden = function() {
-		console.log($(this).css("display"));
 		return $(this).css("display") === "none";
 	}
 
@@ -143,206 +142,33 @@ $(function () {
 	});
 
 	/* plot options */
-	$('#show-dim').click(function() {
-		if ($('#dim').hidden()) {
-			console.log(5);
-			$('#show-dim').css("background", "#BDBDBD");
-			$('#show-display').css("background", "white");
-			$('#dim').visible();
-			$('#disp').invisible();
-		}
+	var xAxis = chart.xAxis[0];
+	var yAxis = chart.yAxis[0];
+
+	$('#x-min').val(xAxis.min);
+	$('#x-max').val(xAxis.max);
+	$('#y-min').val(yAxis.min);
+	$('#y-max').val(yAxis.max);
+	$('#chart-height').val(chart.chartHeight/$(window).height() * 100);
+	$('#chart-width').val(chart.chartWidth/$(window).width() * 100);
+
+	/* handle input changes */
+	$('.plot-range').change(function() {
+		xAxis.setExtremes($('#x-min').val(), $('#x-max').val());
+		yAxis.setExtremes($('#y-min').val(), $('#y-max').val());
 	});
 
-	$('#show-display').click(function() {
-		if ($('#disp').hidden()) {
-			$('#show-display').css("background", "#BDBDBD");
-			$('#show-dim').css("background", "white");
-			$('#dim').invisible();
-			$('#disp').visible();
-		}
+	$('.chart-range').change(function() {
+		var newWidth = $('#chart-width').val()/100.0 * $(window).width();
+		var newHeight = $('#chart-height').val()/100.0 * $(window).width();
+		chart.setSize(newWidth, newHeight);
 	});
 
-	/*
-	$('#set-title').click(function() {
-		mainSelect.invisible();
-		$('#edit-title').visible();
-
-		$('#enter-title').val(chart.options.title.text);
-		$('#enter-color').val(chart.options.title.style.color);
-
-		$('#submit-title').click(function() {
-			var newTitle = $('#enter-title').val();
-			var newColor = $('#enter-color').val();
-
-			chart.setTitle({ text: newTitle });
-			chart.setTitle({ style: { color: newColor }});
-
-			$('#edit-title').invisible();
-			mainSelect.visible();
+	$('#chart-color').change(function() {
+		chart.chartBackground.css({
+			color: $('#chart-color').val()
 		});
 	});
-
-	$('#set-background').click(function() {
-		mainSelect.invisible();
-		$('#edit-background').visible();
-
-		$('#enter-bcolor').val(chart.options.chart.backgroundColor);
-
-		$('#submit-color').click(function() {
-			var newColor = $('#enter-bcolor').val();
-			chart.chartBackground.css({ color: newColor });
-
-			$('#edit-background').invisible();
-			mainSelect.visible();
-		});
-	});
-
-	$('#set-axes').click(function() {
-		mainSelect.invisible();
-		$('#edit-axes').visible();
-
-		$('#enter-x').val(chart.options.xAxis[0].title.text);
-		$('#enter-y').val(chart.options.yAxis[0].title.text);
-		
-		$('#submit-axes').click(function() {
-			var xlabel = $('#enter-x').val();
-			var ylabel = $('#enter-y').val();
-			var xcolor = $('#enter-x-color').val();
-			var ycolor = $('#enter-y-color').val();
-			
-			chart.xAxis[0].setTitle({ text: xlabel });
-			chart.yAxis[0].setTitle({ text: ylabel });
-			chart.xAxis[0].setTitle({ style: { color: xcolor }});
-			chart.yAxis[0].setTitle({ style: { color: ycolor }});
-		
-			$('#edit-axes').invisible();
-			mainSelect.visible();
-		});
-	});
-
-	$('#set-lines').click(function() {
-		mainSelect.invisible();
-		$('#edit-series-display').visible();
-
-		$('#submit-series-display').click(function() {
-			var curName = $('#enter-series-name').val();
-			var newColor = $('#enter-series-color').val();
-			var thickness = $('#enter-thickness').val();
-
-			var series = chart.get(curName);
-			if (series == null) {
-				alert("Please choose a valid series.");
-			} else {
-				series.update({ color: newColor });
-			
-				function toWidth(thicknessOption) {
-					if (thicknessOption == "thin") return 2;
-					else if (thicknessOption == "normal") return 5;
-					return 10;
-				}
-				series.update({ lineWidth: toWidth(thickness) });
-
-				$('#edit-series-display').invisible();
-				mainSelect.visible();
-			}
-		});
-	});
-
-	$('#add-series').click(function() {
-		mainSelect.invisible();
-		$('#set-new-series').visible();
-
-		$('#enter-new-name').val("");
-		$('#enter-data').val("");
-
-		$('#submit-new-series').unbind().click(function() {
-			var newName = $('#enter-new-name').val();
-			var dataAsStr = $('#enter-data').val();
-			var newSeries = parseData(dataAsStr);
-
-			if (newSeries.length > 0) {
-				chart.addSeries({
-					id: newName,
-					name: newName,
-					data: newSeries
-				});
-			
-				$('#enter-series-name').append($('<option>', {
-					value: newName,
-					text: newName
-				}));
-
-				$('#series-selected').append($('<option>', {
-					value: newName,
-					text: newName
-				}));
-			} else {
-				alert("Invalid series");
-			}
-			
-			$('#set-new-series').invisible();
-			mainSelect.visible();
-		});
-	});
-
-	function performSeriesAction(action, seriesList) {
-		$.each(seriesList, function(key, val) {
-			if (action === "show") {
-				chart.get(val).show();
-			} else if (action === "hide") {
-				chart.get(val).hide();
-			} else if (action === "delete") {
-				chart.get(val).remove();
-
-				$('#enter-series-name option').each(function() {
-					if ($(this).val() === val)
-						$(this).remove();
-				});
-
-				$('#series-selected option').each(function() {
-					if ($(this).val() === val)
-						$(this).remove();
-				});
-			}
-		});
-	}
-
-	var selectedSeries, selectedAction;
-	$('#series-bulk').click(function() {
-		mainSelect.invisible();
-		$('#pre-select').visible();
-		
-		$('#from-list').click(function() {
-			$('#pre-select').invisible();
-			$('#select-series').visible();
-
-			$('#submit-series-select').unbind().click(function() {
-				selectedAction = $('#action-selected').val();
-				selectedSeries = $('#series-selected').val();
-
-				performSeriesAction(selectedAction, selectedSeries);
-
-				$('#select-series').invisible();
-				mainSelect.visible();
-			});
-		});
-
-		$('#from-regex').click(function() {
-			$('#pre-select').invisible();
-			$('#search-series').visible();
-
-			$('#submit-series-search').unbind().click(function() {
-				
-				$('#search-series').invisible();
-				mainSelect.visible();
-			});
-		});
-
-		$('#cancel').click(function() {
-			$('#series-bulk').invisible();
-			mainSelect.visible();
-		});
-	});*/
 });
 
 /* aux functions */

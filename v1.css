@@ -34,7 +34,6 @@ button {
 
 /* bottom-left */
 #chart-ctrl {
-	text-align: center;
 	width: 40%;
 	margin-left: 5%;
 	float: left;
@@ -49,11 +48,6 @@ button {
 
 #chart-ctrl span {
 	margin-left: 20px;
-}
-
-.edit-display {
-	padding: 5px;
-	display: none;
 }
 
 .chart-range {
