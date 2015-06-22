@@ -25,8 +25,9 @@ for (var i = 0; i <= 1000; i++) ypts.push(i * i);
 }(jQuery));
 
 var chartX = 15, chartY = 2;
+var tabCount = 1;
 
-$(function () {
+$(document).ready(function () {
 	$('div #cancel').click(function() {
 		$('.edit').invisible();
 	});
@@ -36,8 +37,8 @@ $(function () {
 			borderColor: '#e8eaeb',
 			borderWidth: 5,
 			type: 'scatter',
-			height: 0.6 * $(window).height(),
-			width: 0.7 * $(window).width(),
+			height: 0.5 * $(window).height(),
+			width: 0.6 * $(window).width(),
 			renderTo: 'container',
 			zoomType: 'xy'
 		},
@@ -97,14 +98,22 @@ $(function () {
 		},
 
 		series: [{
-			id: 'Molecule',
-			name: 'Molecule',
+			id: 'Series',
+			name: 'Series',
 			data: ypts
 		}]
 	});
 
 	var chart = $('#container').highcharts();
 
+	chartLabelOptions(chart);
+	chartDisplayOptions(chart);
+	tabs(chart);
+	addSeriesOptions(chart);
+});
+
+/* user options for changing axis/chart titles */
+function chartLabelOptions(chart) {
 	/* title settings */	
 	$('#apply-title').click(function() {
 		chart.setTitle({
@@ -140,7 +149,10 @@ $(function () {
 
 		$('#edit-y-label').invisible();
 	});
+}
 
+/* user options for changing plot range/display */
+function chartDisplayOptions(chart) {
 	/* plot options */
 	var xAxis = chart.xAxis[0];
 	var yAxis = chart.yAxis[0];
@@ -154,14 +166,26 @@ $(function () {
 
 	/* handle input changes */
 	$('.plot-range').change(function() {
+		xAxis.update({
+			floor: $('#x-min').val(),
+			ceiling: $('#x-max').val()
+		});
+		yAxis.update({
+			floor: $('#y-min').val(),
+			ceiling: $('#y-max').val() 
+		});
 		xAxis.setExtremes($('#x-min').val(), $('#x-max').val());
 		yAxis.setExtremes($('#y-min').val(), $('#y-max').val());
 	});
 
 	$('.chart-range').change(function() {
 		var newWidth = $('#chart-width').val()/100.0 * $(window).width();
-		var newHeight = $('#chart-height').val()/100.0 * $(window).width();
+		var newHeight = $('#chart-height').val()/100.0 * $(window).height();
 		chart.setSize(newWidth, newHeight);
+
+		var p = $('#chart-width').val();
+		$('#container').css("width", p + "%");
+		$('#container').css("margin-left", (100 - p)/2 + "%");
 	});
 
 	$('#chart-color').change(function() {
@@ -169,16 +193,105 @@ $(function () {
 			color: $('#chart-color').val()
 		});
 	});
-});
+}
+
+function tabs(chart) {
+	$('#tabs a.tab').live('click', function() {
+		if ($(this).parent().hasClass("current"))	{
+			$(this).parent().removeClass("current");
+			$('.tab-content').invisible();
+			return;
+		}
+
+		// hide all other tabs
+		$("#tabs li").removeClass("current");
+		$(this).parent().addClass("current");
+
+		if ($(this).attr("id") === "add-series") {
+			$('#edit-series-tab').invisible();
+			$('#add-series-tab').visible();
+		} else {
+			$('#add-series-tab').invisible();
+			$('#edit-series-tab').visible();
+			updateSeriesOptions($(this).attr("name"), chart);
+		}
+	});
+
+	$('#tabs a.remove').live('click', function() {
+		// confirm deletion (NI)
+
+		// Get the tab name
+		var tabid = $(this).parent().find(".tab").attr("id");
+
+		// remove tab and related content
+		$(this).parent().remove();
+		$('#update-series-tab').invisible();
+
+		// if there is no current tab and if there are still tabs left, show the first one
+			if ($("#tabs li.current").length == 0 && $("#tabs li").length > 0) {
+
+			// find the first tab    
+			var firsttab = $("#add-series");
+			firsttab.addClass("current");
+		}
+	});
+}
+
+function updateSeriesOptions(seriesName, chart) {
+	var series = chart.get(seriesName);
+	$('#update-series-tab #series-name').val(seriesName);
+	$("#update-series-tab #series-color").val(series.color);
+	$("#update-series-tab #series-color").spectrum({
+		color: series.color
+	});
+
+	$('#update-series-tab #update').click(function() {
+	});
+}
+
+function addSeriesOptions(chart) {
+	$('#add-series-tab #submit').click(function() {
+		var seriesName = $('#add-series-tab #series-name').val();
+		if (seriesName.length === 0) {
+			alert("No name entered.");
+			return;
+		}
+
+		var seriesColor = $('#add-series-tab #series-color').val();
+		var seriesData = parseData($('#add-series-tab #series-data').val());
+
+		if (seriesData.length === 0) {
+			alert("Invalid data.");
+			return;
+		}
+
+		chart.addSeries({
+			id: seriesName,
+			name: seriesName,
+			data: seriesData,
+			color: seriesColor
+		});
+
+		tabCount++;
+
+		var newTab = $('<li><a class = "tab" id = "tab-' + tabCount + 'name = "' + seriesName + '">' + seriesName + '</a><a href = "#" class = "remove">x</a></li>');
+		$('#add-series').parent().before(newTab);
+		$('#add-series-tab *').val('');
+		$('.tab-content').invisible();
+	});
+}
 
 /* aux functions */
 function parseData(str) {
-	var strArr = str.split(',');
+	var strArr = str.split('\n');
 	var series = new Array();	
 	for (var i = 0; i < strArr.length; i++) {
-		var next = parseInt(strArr[i]); // this function is weird, maybe replace
-		if (isNaN(next)) return [];
-		series.push(next);
+		var xyStr = strArr[i].split(',');
+		var x = parseInt(xyStr[0]);
+		var y = parseInt(xyStr[1]);
+		console.log(xyStr);
+		if (isNaN(x) || isNaN(y)) return [];
+		series.push(new Array(x, y));
 	}
 	return series;
 }

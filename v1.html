@@ -8,11 +8,48 @@
 		<script src="http://code.highcharts.com/modules/exporting.js"></script>
 		<link rel="stylesheet", type="text/css", a href = "v1.css" />
 		<script src='http://bgrins.github.io/spectrum/spectrum.js'></script>
-		<script src='customEvents.js'></script>
 		<link rel='stylesheet' href='http://bgrins.github.io/spectrum/spectrum.css' />
+		<script src='customEvents.js'></script>
 	</head>
 
 	<body>
+		<!-- top -->
+		<div id = "settings-top">
+			<div id = "chart-settings">
+				<h3>Plot range</h3>
+				<b>x</b> from <input type = "number"> to <input type = "number">
+				<br/>
+				<b>y</b> from <input type = "number"> to <input type = "number">
+			</div>
+
+			<div id = "series-view">
+				<!-- tablist -->
+				<ul id="tabs">
+					<li><a class = "tab" id = "add-series">+</a></li>
+					<li><a class = "tab" id = "tab-1" name = "Series">Series</a><a href = "#" class = "remove">x</a></li>
+				</ul>
+
+				<!-- add series content -->
+				<div class = "tab-content" id = "add-series-tab">
+					<b>Name</b> <input type = "text" id = "series-name"> <span/>
+					<b>Color</b> <input type = "color" id = "series-color"><br/>
+					<b>Data</b> <br/><textarea id = "series-data"> </textarea>
+					<br/><button id = "submit">Add series</button>
+				</div>
+
+				<!-- edit series content -->
+				<div class = "tab-content" id = "edit-series-tab">
+					<button id = "add-pts">Add points</button>
+					<button id = "remove-pts">Remove points</button>
+					<button id = "gen-hist">Generate histogram</button>
+					<br/><br/>
+					<b>Name</b> <input type = "text" id = "series-name"> <span/>
+					<b>Color</b> <input type = "color" id = "series-color"> <br/> <button id = "update">Update</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- chart area -->
 		<div id="container"> </div>
 
 		<!-- edit windows activated on mouseover -->
@@ -44,7 +81,7 @@
 			<button id = 'cancel'>Cancel</button>
 		</div>
 
-		<!-- bottom left -->
+		<!--
 		<div id = "chart-ctrl">
 			<b>Plot: x</b> from
 			<input class = "plot-range" id = "x-min" type = "number"> to
@@ -62,13 +99,20 @@
 			
 			<b>Chart background</b>
 			<input id = "chart-color" type = "color">
-		</div>
+		</div>-->
 
-		<!-- bottom right -->
-		<div id = "series-ctrl">
-			<button></button>
-		</div>
+		<!-- bottom right
+		<div id = "series-ctrl"></div>
 
+		<div id = "series-indiv">
+			<div class = "header">
+				<b style = "font-size: 18px">View series</b>
+				<br/><br/>
+				<button>Individual view</button>
+				<button>Bulk view</button>
+				<b>Color</b> <input type = "color" id = "series-color">
+			</div>
+		</div>-->
 		<!-- main script -->
 		<script src = "charts.js"></script>
 	</body>
