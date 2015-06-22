@@ -24,10 +24,17 @@ for (var i = 0; i <= 1000; i++) ypts.push(i * i);
 	}
 }(jQuery));
 
-var chartX = 15, chartY = 2;
+function updateTitlePosition() {
+	chartX = $('#container').offset().left/$(window).width();
+	chartY = $('#container').offset().top/$(window).height();
+}
+
+var chartX, chartY;
 var tabCount = 1;
 
 $(document).ready(function () {
+	updateTitlePosition();
+
 	$('div #cancel').click(function() {
 		$('.edit').invisible();
 	});
@@ -54,8 +61,8 @@ $(document).ready(function () {
 			events: {
 				mouseover: function() {
 					$('#edit-title').visible();
-					var x = chartX/100.0 * $(window).width() + this.title.x;
-					var y = chartY/100.0 * $(window).height() + this.title.y + 20;
+					var x = chartX * $(window).width() + this.title.x;
+					var y = chartY * $(window).height() + this.title.y + 20;
 					$('#edit-title').position(x, y);
 					$('#new-title').val(this.options.title.text);
 					$('#new-title-color').val(this.options.title.style.color);
@@ -70,8 +77,8 @@ $(document).ready(function () {
 					mouseover: function() {
 						var title = this.chart.options.xAxis[0].title;
 						$('#edit-x-label').visible();
-						var x = chartX/100.0 * $(window).width() + this.chart.chartWidth/2.0;
-						var y = chartY/100.0 * $(window).height() + this.chart.chartHeight - 30;
+						var x = chartX * $(window).width() + this.chart.chartWidth/2.0;
+						var y = chartY * $(window).height() + this.chart.chartHeight - 30;
 						$('#edit-x-label').position(x, y);
 						$('#new-x-label').val(this.options.title.text);
 						$('#new-x-color').val(this.options.title.style.color);
@@ -87,8 +94,8 @@ $(document).ready(function () {
 					mouseover: function() {
 						var title = this.chart.options.yAxis[0].title;
 						$('#edit-y-label').visible();
-						var x = chartX/100.0 * $(window).width() + 30;
-						var y = chartY/100.0 * $(window).height() + this.chart.chartHeight/2.0;
+						var x = chartX * $(window).width() + 30;
+						var y = chartY * $(window).height() + this.chart.chartHeight/2.0;
 						$('#edit-y-label').position(x, y);
 						$('#new-y-label').val(this.options.title.text);
 						$('#new-y-color').val(this.options.title.style.color);
