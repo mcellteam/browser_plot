@@ -24,16 +24,13 @@ for (var i = 0; i <= 1000; i++) ypts.push(i * i);
 	}
 }(jQuery));
 
-function updateTitlePosition() {
-	chartX = $('#container').offset().left/$(window).width();
-	chartY = $('#container').offset().top/$(window).height();
-}
-
 var chartX, chartY;
+var titleShift = 0.07;
 var tabCount = 1;
 
 $(document).ready(function () {
-	updateTitlePosition();
+	chartX = $('#container').offset().left/$(window).width();
+	chartY = $('#container').offset().top/$(window).height();
 
 	$('div #cancel').click(function() {
 		$('.edit').invisible();
@@ -66,6 +63,16 @@ $(document).ready(function () {
 					$('#edit-title').position(x, y);
 					$('#new-title').val(this.options.title.text);
 					$('#new-title-color').val(this.options.title.style.color);
+
+					$('#edit-title').mouseleave(function() {
+						console.log("triggered");
+						$('#edit-title').invisible();
+					});
+				},
+
+				mouseout: function() {
+					if ($('#edit-title:hover').length === 0)
+						$('#edit-title').invisible();
 				}
 			}
 		},
@@ -82,6 +89,15 @@ $(document).ready(function () {
 						$('#edit-x-label').position(x, y);
 						$('#new-x-label').val(this.options.title.text);
 						$('#new-x-color').val(this.options.title.style.color);
+
+						$('#edit-x-label').mouseleave(function() {
+							$('#edit-x-label').invisible();
+						});
+					},
+
+					mouseout: function() {
+					if ($('#edit-x-label:hover').length === 0)
+						$('#edit-x-label').invisible();
 					}
 				}
 			}
@@ -99,6 +115,15 @@ $(document).ready(function () {
 						$('#edit-y-label').position(x, y);
 						$('#new-y-label').val(this.options.title.text);
 						$('#new-y-color').val(this.options.title.style.color);
+
+						$('#edit-y-label').mouseleave(function() {
+							$('#edit-y-label').invisible();
+						});
+					},
+
+					mouseout: function() {
+					if ($('#edit-y-label:hover').length === 0)
+						$('#edit-y-label').invisible();
 					}
 				}
 			}
@@ -205,11 +230,13 @@ function chartDisplayOptions(chart) {
 function tabs(chart) {
 	$('#tabs a.tab').live('click', function() {
 		if ($(this).parent().hasClass("current"))	{
+			chartY -= titleShift;
 			$(this).parent().removeClass("current");
 			$('.tab-content').invisible();
 			return;
 		}
 
+		chartY += titleShift;
 		// hide all other tabs
 		$("#tabs li").removeClass("current");
 		$(this).parent().addClass("current");
@@ -246,13 +273,22 @@ function tabs(chart) {
 
 function updateSeriesOptions(seriesName, chart) {
 	var series = chart.get(seriesName);
-	$('#update-series-tab #series-name').val(seriesName);
-	$("#update-series-tab #series-color").val(series.color);
-	$("#update-series-tab #series-color").spectrum({
+	$('#edit-series-tab #series-name').val(seriesName);
+	$("#edit-series-tab #series-color").val(series.color);
+	$("#edit-series-tab #series-color").spectrum({
 		color: series.color
 	});
 
-	$('#update-series-tab #update').click(function() {
+	$('#edit-series-tab #update').click(function() {
+		var newName = $('#edit-series-tab #series-name').val();
+		var newColor = $('#edit-series-tab #series-color').val();
+
+		series.update({
+			id: newName,
+			name: newName,
+			color: newColor
+		});
+		console.log(newName);
 	});
 }
 
