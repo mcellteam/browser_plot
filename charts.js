@@ -288,7 +288,11 @@ function updateSeriesOptions(seriesName, chart) {
 			name: newName,
 			color: newColor
 		});
-		console.log(newName);
+
+		var curTab = $('[class="tab"][name="' + seriesName + '"]');
+		curTab.attr('name', newName)
+			.text(newName);
+		console.log($('#tabs'));
 	});
 }
 
@@ -317,9 +321,20 @@ function addSeriesOptions(chart) {
 
 		tabCount++;
 
-		var newTab = $('<li><a class = "tab" id = "tab-' + tabCount + 'name = "' + seriesName + '">' + seriesName + '</a><a href = "#" class = "remove">x</a></li>');
-		$('#add-series').parent().before(newTab);
+		var newTab = $('<li>')
+			.append($('<a>')
+				.addClass('tab')
+				.attr('id', 'tab-' + tabCount)
+				.attr('name', seriesName)
+				.append(seriesName))
+			.append($('<a>')
+				.attr('href', '#')
+				.addClass('remove')
+				.append('x'));
+
+		$('#tabs').append(newTab);
 		$('#add-series-tab *').val('');
+		$('li.current').removeClass("current");
 		$('.tab-content').invisible();
 	});
 }

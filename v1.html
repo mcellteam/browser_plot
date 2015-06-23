@@ -17,9 +17,12 @@
 		<div id = "settings-top">
 			<div id = "chart-settings">
 				<h3>Plot range</h3>
-				<b>x</b> from <input type = "number"> to <input type = "number">
+				<b>x</b> from
+				<input type = "number" id = "x-min" class = "plot-range">
+				to <input type = "number" id = "x-max" class = "plot-range">
 				<br/>
-				<b>y</b> from <input type = "number"> to <input type = "number">
+				<b>y</b> from <input type = "number" id = "y-min" class = "plot-range">
+				to <input type = "number" id = "y-max" class = "plot-range">
 			</div>
 
 			<div id = "series-view">
@@ -81,38 +84,6 @@
 			<button id = 'cancel'>Cancel</button>
 		</div>
 
-		<!--
-		<div id = "chart-ctrl">
-			<b>Plot: x</b> from
-			<input class = "plot-range" id = "x-min" type = "number"> to
-			<input class = "plot-range" id = "x-max" type = "number"> 
-			<span/> <b>y</b> from
-			<input class = "plot-range" id = "y-min" type = "number"> to
-			<input class = "plot-range" id = "y-max" type = "number">
-			<br/><br/>
-
-			<b>Chart height:</b>
-			<input class = "chart-range" id = "chart-height" type = "range" min = "0" max = "100">
-			<span/> <b>Chart width:</b>
-			<input class = "chart-range" id = "chart-width" type = "range" min = "0" max = "100">
-			<br/><br/>
-			
-			<b>Chart background</b>
-			<input id = "chart-color" type = "color">
-		</div>-->
-
-		<!-- bottom right
-		<div id = "series-ctrl"></div>
-
-		<div id = "series-indiv">
-			<div class = "header">
-				<b style = "font-size: 18px">View series</b>
-				<br/><br/>
-				<button>Individual view</button>
-				<button>Bulk view</button>
-				<b>Color</b> <input type = "color" id = "series-color">
-			</div>
-		</div>-->
 		<!-- main script -->
 		<script src = "charts.js"></script>
 	</body>
