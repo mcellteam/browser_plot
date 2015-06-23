@@ -65,7 +65,6 @@ $(document).ready(function () {
 					$('#new-title-color').val(this.options.title.style.color);
 
 					$('#edit-title').mouseleave(function() {
-						console.log("triggered");
 						$('#edit-title').invisible();
 					});
 				},
@@ -274,10 +273,12 @@ function tabs(chart) {
 function updateSeriesOptions(seriesName, chart) {
 	var series = chart.get(seriesName);
 	$('#edit-series-tab #series-name').val(seriesName);
-	$("#edit-series-tab #series-color").val(series.color);
 	$("#edit-series-tab #series-color").spectrum({
-		color: series.color
+		color: series.color,
+		showInput: true,
+		preferredFormat: 'hex'
 	});
+	$("#edit-series-tab #series-color").val(series.color);
 
 	$('#edit-series-tab #update').click(function() {
 		var newName = $('#edit-series-tab #series-name').val();
@@ -292,7 +293,6 @@ function updateSeriesOptions(seriesName, chart) {
 		var curTab = $('[class="tab"][name="' + seriesName + '"]');
 		curTab.attr('name', newName)
 			.text(newName);
-		console.log($('#tabs'));
 	});
 }
 
@@ -347,7 +347,6 @@ function parseData(str) {
 		var xyStr = strArr[i].split(',');
 		var x = parseInt(xyStr[0]);
 		var y = parseInt(xyStr[1]);
-		console.log(xyStr);
 		if (isNaN(x) || isNaN(y)) return [];
 		series.push(new Array(x, y));
 	}

@@ -18,7 +18,7 @@ class MyServer(BaseHTTPRequestHandler):
 				#send file content to client
 				self.wfile.write(bytes(f.read(), "UTF-8"))
 				f.close()
-			if self.path.endswith('v1.css'):
+			if self.path.endswith('.css'):
 				f = open(os.curdir + os.sep + self.path)
 				self.send_response(200)
 				self.send_header('Content-type', 'text/css')
