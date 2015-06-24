@@ -24,25 +24,29 @@ for (var i = 0; i <= 1000; i++) ypts.push(i * i);
 	}
 }(jQuery));
 
-var chartX, chartY;
+var chartX = 0.20;
+var chartY = 0.03;
 var titleShift = 0.07;
 var tabCount = 1;
 
 $(document).ready(function () {
-	chartX = $('#container').offset().left/$(window).width();
-	chartY = $('#container').offset().top/$(window).height();
-
 	$('div #cancel').click(function() {
 		$('.edit').invisible();
 	});
 
 	$('#container').highcharts({
 		chart: {
-			borderColor: '#e8eaeb',
-			borderWidth: 5,
+			events: {
+				redraw: function() {
+					var xAxis = this.xAxis[0];
+					var yAxis = this.yAxis[0];
+					$('#chart-settings #x-min').val(xAxis.min);
+					$('#chart-settings #x-max').val(xAxis.max);
+					$('#chart-settings #y-min').val(yAxis.min);
+					$('#chart-settings #y-max').val(yAxis.max);
+				}
+			},
 			type: 'scatter',
-			height: 0.5 * $(window).height(),
-			width: 0.6 * $(window).width(),
 			renderTo: 'container',
 			zoomType: 'xy'
 		},
@@ -142,6 +146,20 @@ $(document).ready(function () {
 	tabs(chart);
 	addSeriesOptions(chart);
 	updateSeriesOptions(chart);
+
+	$('#chart-resizer').resizable({
+		resize: function() {
+			var width = this.offsetWidth - 20;
+			var height = this.offsetHeight - 20;
+
+			chart.setSize(width, height, false);
+
+			var marginWidth = 50 - (50.0 * width / $(window).width());
+			chartX = marginWidth/100.0;
+			$(this).css({ 'margin-left': marginWidth + '%' });
+			console.log($(this));
+		}
+	});
 });
 
 /* user options for changing axis/chart titles */
@@ -210,16 +228,15 @@ function chartDisplayOptions(chart) {
 		yAxis.setExtremes($('#y-min').val(), $('#y-max').val());
 	});
 
-	$('.chart-range').change(function() {
-		var newWidth = $('#chart-width').val()/100.0 * $(window).width();
-		var newHeight = $('#chart-height').val()/100.0 * $(window).height();
-		chart.setSize(newWidth, newHeight);
+	var curBackground = chart.options.chart.backgroundColor;
 
-		var p = $('#chart-width').val();
-		$('#container').css("width", p + "%");
-		$('#container').css("margin-left", (100 - p)/2 + "%");
+	$('#chart-color').spectrum({
+		color: curBackground,
+		showInput: true,
+		preferredFormat: 'hex'
 	});
 
+	$('#chart-color').val(curBackground);
 	$('#chart-color').change(function() {
 		chart.chartBackground.css({
 			color: $('#chart-color').val()
@@ -296,11 +313,8 @@ function updateSeriesOptions(chart) {
 			color: newColor
 		});
 
-		//console.log(curTab);
 		curTab.attr('name', newName)
 			.text(newName);
-		//console.log($('#tabs'));
-		//console.log(seriesName);*/
 	});
 }
 

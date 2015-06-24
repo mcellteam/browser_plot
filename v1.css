@@ -8,13 +8,15 @@ div span {
 
 /* chart area */
 
-#container {
+#chart-resizer { /* outer panel */
 	width: 60%;
 	margin-left: 20%;
-	margin-top: 2%;
-	margin-bottom: 1%;
+	margin-top: 3%;
+	border: 1px solid gray;
+}
+
+#container {
 	text-align: center;
-	padding: 20px;
 }
 
 /* label setting windows */
@@ -47,7 +49,7 @@ button {
 /* top-left */
 #chart-settings {
 	margin-left: 3%;
-	width: 25%;
+	width: 20%;
 	float: left;
 	border: 1px solid black;
 	border-radius: 5px;
@@ -56,7 +58,7 @@ button {
 }
 
 #chart-settings input {
-	width: 40px;
+	width: 30%;
 }
 
 /* top-middle */
