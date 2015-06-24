@@ -141,6 +141,7 @@ $(document).ready(function () {
 	chartDisplayOptions(chart);
 	tabs(chart);
 	addSeriesOptions(chart);
+	updateSeriesOptions(chart);
 });
 
 /* user options for changing axis/chart titles */
@@ -240,13 +241,24 @@ function tabs(chart) {
 		$("#tabs li").removeClass("current");
 		$(this).parent().addClass("current");
 
+		//console.log($(this));
 		if ($(this).attr("id") === "add-series") {
 			$('#edit-series-tab').invisible();
 			$('#add-series-tab').visible();
 		} else {
 			$('#add-series-tab').invisible();
 			$('#edit-series-tab').visible();
-			updateSeriesOptions($(this).attr("name"), chart);
+			var seriesName = $(this).attr("name");
+			var series = chart.get(seriesName);
+			
+			$('#edit-series-tab #series-name').val(seriesName);
+			$("#edit-series-tab #series-color").spectrum({
+				color: series.color,
+				showInput: true,
+				preferredFormat: 'hex'
+			});
+
+			$("#edit-series-tab #series-color").val(series.color);
 		}
 	});
 
@@ -270,17 +282,11 @@ function tabs(chart) {
 	});
 }
 
-function updateSeriesOptions(seriesName, chart) {
-	var series = chart.get(seriesName);
-	$('#edit-series-tab #series-name').val(seriesName);
-	$("#edit-series-tab #series-color").spectrum({
-		color: series.color,
-		showInput: true,
-		preferredFormat: 'hex'
-	});
-	$("#edit-series-tab #series-color").val(series.color);
-
+function updateSeriesOptions(chart) {
 	$('#edit-series-tab #update').click(function() {
+		var curTab = $($('.current').children()[0]);
+		var series = chart.get(curTab.attr('name'));
+
 		var newName = $('#edit-series-tab #series-name').val();
 		var newColor = $('#edit-series-tab #series-color').val();
 
@@ -290,9 +296,11 @@ function updateSeriesOptions(seriesName, chart) {
 			color: newColor
 		});
 
-		var curTab = $('[class="tab"][name="' + seriesName + '"]');
+		//console.log(curTab);
 		curTab.attr('name', newName)
 			.text(newName);
+		//console.log($('#tabs'));
+		//console.log(seriesName);*/
 	});
 }
 
@@ -336,6 +344,8 @@ function addSeriesOptions(chart) {
 		$('#add-series-tab *').val('');
 		$('li.current').removeClass("current");
 		$('.tab-content').invisible();
+
+		console.log($('#tabs'));
 	});
 }
 
