@@ -24,9 +24,6 @@ for (var i = 0; i <= 1000; i++) ypts.push(i * i);
 	}
 }(jQuery));
 
-var chartX = 0.20;
-var chartY = 0.03;
-var titleShift = 0.07;
 var lastTab = 1;
 var spectrumVisible = false;
 
@@ -53,8 +50,10 @@ $(document).ready(function () {
 			events: {
 				mouseover: function() {
 					$('#edit-title').visible();
-					var x = chartX * $(window).width() + this.title.x;
-					var y = chartY * $(window).height() + this.title.y + 20;
+					var pos = $('#container').offset();
+					console.log(this);
+					var x = pos.left + this.title.x;
+					var y = pos.top + this.title.y;
 					$('#edit-title').position(x, y);
 					$('#new-title').val(this.options.title.text);
 					$('#new-title-color').val(this.options.title.style.color);
@@ -85,8 +84,9 @@ $(document).ready(function () {
 					mouseover: function() {
 						var title = this.chart.options.xAxis[0].title;
 						$('#edit-x-label').visible();
-						var x = chartX * $(window).width() + this.chart.chartWidth/2.0;
-						var y = chartY * $(window).height() + this.chart.chartHeight - 30;
+						var pos = $('#container').offset();
+						var x = pos.left + this.chart.chartWidth/2.0;
+						var y = pos.top + this.chart.chartHeight - 50;
 						$('#edit-x-label').position(x, y);
 						$('#new-x-label').val(this.options.title.text);
 						$('#new-x-color').val(this.options.title.style.color);
@@ -118,8 +118,9 @@ $(document).ready(function () {
 					mouseover: function() {
 						var title = this.chart.options.yAxis[0].title;
 						$('#edit-y-label').visible();
-						var x = chartX * $(window).width() + 30;
-						var y = chartY * $(window).height() + this.chart.chartHeight/2.0;
+						var pos = $('#container').offset();
+						var x = pos.left + 20;
+						var y = pos.top + this.chart.chartHeight/2.0 - 20;
 						$('#edit-y-label').position(x, y);
 						$('#new-y-label').val(this.options.title.text);
 						$('#new-y-color').val(this.options.title.style.color);
@@ -161,15 +162,20 @@ $(document).ready(function () {
 			chart.setSize(width, height, false);
 
 			var marginWidth = 50 - (50.0 * width / $(window).width());
-			chartX = marginWidth/100.0;
 			$(this).css({ 'margin-left': marginWidth + '%' });
+		}
+	});
+
+	$('#series-view').resizable({
+		handles: 'e',
+		stop: function() {
 		}
 	});
 });
 
 /* user options for changing axis/chart titles */
 function chartLabelOptions(chart) {
-	$('#new-title-color').spectrum({
+	$('.edit-color').spectrum({
 		showInput: true,
 		preferredFormat: 'hex',
 		show: function(color) {
@@ -258,13 +264,11 @@ function chartDisplayOptions(chart) {
 function tabs(chart) {
 	$('#tabs a.tab').live('click', function() {
 		if ($(this).parent().hasClass("current"))	{
-			chartY -= titleShift;
 			$(this).parent().removeClass("current");
 			$('.tab-content').invisible();
 			return;
 		}
 
-		chartY += titleShift;
 		// hide all other tabs
 		$("#tabs li").removeClass("current");
 		$(this).parent().addClass("current");
