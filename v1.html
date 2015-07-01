@@ -6,17 +6,17 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<script src="http://code.highcharts.com/highcharts.js"></script>
 		<script src="http://code.highcharts.com/modules/exporting.js"></script>
-		<link rel="stylesheet", type="text/css", a href = "v1.css" />
 		<script src='http://bgrins.github.io/spectrum/spectrum.js'></script>
 		<link rel='stylesheet' href='http://bgrins.github.io/spectrum/spectrum.css' />
 		<script src='external/customEvents.js'></script>
 		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" />
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+		<link rel="stylesheet", type="text/css", a href = "v1.css" />
 	</head>
 
 	<body>
 		<!-- top -->
-		<div id = "settings-top">
+		<div id = "settings-panel">
 			<div id = "chart-settings">
 				<b>Plot range</b><br/>
 				<b>x</b> from
@@ -80,8 +80,8 @@
 		</div>
 
 		<!-- chart area -->
-		<div id = "chart-resizer">
-			<div id = "container"></div>
+		<div id = "chart-container">
+			<div id = "chart"></div>
 		</div>
 
 		<!-- edit windows activated on mouseover -->

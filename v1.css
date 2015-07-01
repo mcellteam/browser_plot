@@ -9,49 +9,70 @@ div span {
 	margin-left: 10px;
 }
 
-/* chart area */
-
-#chart-resizer { /* outer panel */
-	width: 60%;
-	margin-left: 20%;
-	margin-top: 3%;
-	border: 1px solid gray;
-}
-
-#container {
-	text-align: center;
-}
-
-/* top panel */
-#settings-top {
-	width: 100%;
-	height: 25%;
+/* left panel */
+#settings-panel {
+	float: left;
+	width: 20%;
+	height: 100%;
 	font-size: 13px;
-	border-bottom: 1px solid #bdbdbd;
 	overflow: hidden;
 	background: #ededed;
+	border-right: 1px solid gray;
 }
 
 /* top-left */
 #chart-settings {
-	width: 20%;
-	height: 100%;
+	width: 100%;
+	height: 20%;
 	float: left;
 	padding: 10px;
-	border-right: 1px solid #bdbdbd;
+	border-bottom: 1px solid gray;
 	background: #ededed;
 }
 
-#chart-settings input {
-	width: 30%;
+#chart-settings input {	width: 30%; }
+
+/* middle-left; list view of series/files */
+#series-view {
+	float: left;
+	display: inline block;
+	background: #e1e1e1;
+	width: 100%;
+	border-bottom: 1px solid #bdbdbd;
 }
 
-/* top-middle */
+/* series selection + button area */
+.select-series {
+	float: left;
+	padding: 15px;
+	width: 100%;
+	background: #ededed;
+}
+
+#series-view span {
+	margin-left: 5px;
+	font-size: 12px;
+}
+
+/* contains options */
+#series-view #set-series {
+	padding: 10px;
+	background: #e1e1e1;
+}
+
+/* selection list */
+#series-view #series-list {
+	margin-top: 10px;
+	width: 125px;
+	height: 50%;
+}
+
+/* tab + tab content region */
 #tab-view {
 	float: left;
 	width: 30%;
 	height: 100%;
-	display: none;
+	display: none; /* unused for now */
 	background: #ededed;
 	padding-left: 10px;
 	border-right: 1px solid #bdbdbd;
@@ -79,27 +100,13 @@ div span {
 	z-index: 1;
 }
 
-#tabs li a {
-	color: black;
-	text-decoration: none;
-}
+#tabs li a { color: black; text-decoration: none; }
+#tabs li.current { background-color: #ededed; }
+#tabs li.current a { color: #000; text-decoration: none; }
+#tabs li a.remove {	color: #f00; margin-left: 10px; }
 
-#tabs li.current {
-	background-color: #ededed;
-}
-
-#tabs li.current a {
-	color: #000;
-	text-decoration: none;
-}
-
-#tabs li a.remove {
-	color: #f00;
-	margin-left: 10px;
-}
-
+/* displays on tab click */
 .tab-content {
-	display: none;
 	padding: 5px;
 	height: 100%;
 	border-left: 1px solid gray;
@@ -109,7 +116,7 @@ div span {
 	z-index: 2;
 }
 
-/* label setting windows */
+/* chart mouseover labels */
 .edit {
 	background-color: #FCF79F;
 	position: absolute;
@@ -129,43 +136,24 @@ button {
 	margin: 0;
 }
 
-/* top-right */
-#series-view {
+/* remainder region containing chart */
+#chart-container {
 	float: left;
-	width: 35%;
-	height: 100%;
 	display: inline block;
-	background: #e1e1e1;
-	border-right: 1px solid #bdbdbd;
+	margin-right: 0;
+	width: 79%;
+	height: 100%;
 }
 
-.select-series {
+/* chart container */
+#chart {
+	position: relative;
+	width: 70%;
+	height: 60%;
+	margin-left: 15%;
+	margin-top: 3%;
 	float: left;
-	padding: 5px;
-	height: 100%;
+	display: inline block;
+	border: 1px solid gray;
 	text-align: center;
-	background: #ededed;
-}
-
-#series-view span {
-	margin-left: 5px;
-	font-size: 12px;
-}
-
-.select-series div {
-	float: left;
-	display: inline block;
-}
-
-#series-view #set-series {
-	float: left;
-	padding: 10px;
-	height: 100%;
-	background: #e1e1e1;
-}
-
-#series-view #series-list {
-	margin-top: 10px;
-	width: 120px;
-	height: 50%;
 }

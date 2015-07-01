@@ -24,15 +24,10 @@ var fileList = new Array("a.World.dat", "b.World.dat");
 	}
 }(jQuery));
 
-var lastTab = 1;
 var spectrumVisible = false;
 
 $(document).ready(function () {
-	$('div #cancel').click(function() {
-		$('.edit').invisible();
-	});
-
-	$('#container').highcharts({
+	$('#chart').highcharts({
 		chart: {
 			type: 'scatter',
 			renderTo: 'container',
@@ -50,7 +45,7 @@ $(document).ready(function () {
 			events: {
 				mouseover: function() {
 					$('#edit-title').visible();
-					var pos = $('#container').offset();
+					var pos = $('#chart').offset();
 					console.log(this);
 					var x = pos.left + this.title.x;
 					var y = pos.top + this.title.y;
@@ -84,7 +79,7 @@ $(document).ready(function () {
 					mouseover: function() {
 						var title = this.chart.options.xAxis[0].title;
 						$('#edit-x-label').visible();
-						var pos = $('#container').offset();
+						var pos = $('#chart').offset();
 						var x = pos.left + this.chart.chartWidth/2.0;
 						var y = pos.top + this.chart.chartHeight - 50;
 						$('#edit-x-label').position(x, y);
@@ -118,7 +113,7 @@ $(document).ready(function () {
 					mouseover: function() {
 						var title = this.chart.options.yAxis[0].title;
 						$('#edit-y-label').visible();
-						var pos = $('#container').offset();
+						var pos = $('#chart').offset();
 						var x = pos.left + 20;
 						var y = pos.top + this.chart.chartHeight/2.0 - 20;
 						$('#edit-y-label').position(x, y);
@@ -140,7 +135,11 @@ $(document).ready(function () {
 		}
 	});
 
-	var chart = $('#container').highcharts();
+	$('div #cancel').click(function() {
+		$('.edit').invisible();
+	});
+
+	var chart = $('#chart').highcharts();
 
 	chartLabelOptions(chart);
 	chartDisplayOptions(chart);
@@ -148,21 +147,55 @@ $(document).ready(function () {
 	addSeriesOptions(chart);
 	updateSeriesOptions(chart);
 
-	$('#settings-top').resizable({ handles: 's' });
-	$('#chart-settings').resizable({ handles: 'e' });
-	$('#tab-view').resizable({ handles: 'e' });
+	$('#left-panel').resizable({
+		handles: 'e',
+		resize: function(event, ui) {
+			var widthPct = 99.0 - 100.0 * ui.size.width/$(window).width();
+			$('#right-container').css({ 'width': widthPct + '%' });
 
-	$('#chart-resizer').resizable({
+			chart.setSize($('#chart').width() - 20,
+						$('#chart').height() - 20, false);
+		}
+	});
+	$('#chart-settings').resizable({ handles: 's' });
+	$('#tab-view').resizable({ handles: 's' });
+
+	$('#chart').resizable({
 		resize: function() {
 			var width = this.offsetWidth - 20;
 			var height = this.offsetHeight - 20;
 
 			chart.setSize(width, height, false);
 
-			var marginWidth = 50 - (50.0 * width / $(window).width());
+			var marginWidth = 50 - (50.0 * width / $('#right-container').width());
 			$(this).css({ 'margin-left': marginWidth + '%' });
 		}
 	});
+
+	/*function getdatafromfile(filename)  {
+// Read annotation file. Example : %timeinstant \t %value \n
+// Return an array of string
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState==4 && xmlhttp.status==200)
+				console.log(xmlhttp.responseText);
+		}
+		xmlhttp.open("GET", filename, true);
+		xmlhttp.send();
+	}
+	getdatafromfile("../temp.txt");*/
+	function getdatafromfile(path) {
+		$.ajax({
+			type: "GET",
+			url: path,
+			success: function(resp) {
+				console.log(resp);
+			},
+			error: function(){
+				console.log("NO");
+			}
+		});
+	}
 });
 
 /* user options for changing axis/chart titles */
