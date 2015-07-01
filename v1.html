@@ -30,11 +30,11 @@
 				<input type = "color" id = "chart-color">
 			</div>
 
-			<div id = "series-view">
+			<div id = "tab-view">
 				<!-- tablist -->
 				<ul id="tabs">
 					<li><a class = "tab" id = "add-series">+</a></li>
-					<li><a class = "tab" id = "tab-1" name = "Series">Series</a><a href = "#" class = "remove">x</a></li>
+					<!--<li><a class = "tab" id = "tab-1" name = "Series">Series</a><a href = "#" class = "remove">x</a></li>-->
 				</ul>
 
 				<!-- add series content -->
@@ -56,7 +56,26 @@
 				</div>
 			</div>
 
-			<div id = "tabs-expand">
+			<div id = "series-view">
+				<div class = "select-series">
+					<button>Add</button>
+					<button>Remove</button>
+					<button>Hide</button><br/><br/>
+
+					<input type = "text"><br/>
+					<select multiple size = "7" id = "series-list">
+					<option>Add series...</option>
+					</select>
+				</div>
+				<div id = "set-series">
+					<span/>Upload plot data<br/>
+					<input type = "file"><br/><br/>
+
+					Name <input type = "text"><br/><br/>
+					Color <input type = "color">
+					<span/> Symbol <select></select>
+					<br/><br/><button>Update</button>
+				</div>
 			</div>
 		</div>
 

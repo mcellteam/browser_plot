@@ -1,6 +1,6 @@
 /* forged dataset */
-var ypts = new Array();
-for (var i = 0; i <= 1000; i++) ypts.push(i * i);
+var dataDir = "test_sim/abc_files/mcell/react_data/seed_00001";
+var fileList = new Array("a.World.dat", "b.World.dat");
 
 (function($) {
     $.fn.invisible = function() {
@@ -137,13 +137,7 @@ $(document).ready(function () {
 					}
 				}
 			}
-		},
-
-		series: [{
-			id: 'Series',
-			name: 'Series',
-			data: ypts
-		}]
+		}
 	});
 
 	var chart = $('#container').highcharts();
@@ -154,6 +148,10 @@ $(document).ready(function () {
 	addSeriesOptions(chart);
 	updateSeriesOptions(chart);
 
+	$('#settings-top').resizable({ handles: 's' });
+	$('#chart-settings').resizable({ handles: 'e' });
+	$('#tab-view').resizable({ handles: 'e' });
+
 	$('#chart-resizer').resizable({
 		resize: function() {
 			var width = this.offsetWidth - 20;
@@ -163,12 +161,6 @@ $(document).ready(function () {
 
 			var marginWidth = 50 - (50.0 * width / $(window).width());
 			$(this).css({ 'margin-left': marginWidth + '%' });
-		}
-	});
-
-	$('#series-view').resizable({
-		handles: 'e',
-		stop: function() {
 		}
 	});
 });
