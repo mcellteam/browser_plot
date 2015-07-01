@@ -1,4 +1,3 @@
-/* forged dataset */
 var dataDir = "test_sim/abc_files/mcell/react_data/seed_00001";
 var fileList = new Array("a.World.dat", "b.World.dat");
 
@@ -147,11 +146,11 @@ $(document).ready(function () {
 	addSeriesOptions(chart);
 	updateSeriesOptions(chart);
 
-	$('#left-panel').resizable({
+	$('#settings-panel').resizable({
 		handles: 'e',
 		resize: function(event, ui) {
 			var widthPct = 99.0 - 100.0 * ui.size.width/$(window).width();
-			$('#right-container').css({ 'width': widthPct + '%' });
+			$('#chart-container').css({ 'width': widthPct + '%' });
 
 			chart.setSize($('#chart').width() - 20,
 						$('#chart').height() - 20, false);
@@ -167,35 +166,10 @@ $(document).ready(function () {
 
 			chart.setSize(width, height, false);
 
-			var marginWidth = 50 - (50.0 * width / $('#right-container').width());
+			var marginWidth = 50 - (50.0 * width / $('#chart-container').width());
 			$(this).css({ 'margin-left': marginWidth + '%' });
 		}
 	});
-
-	/*function getdatafromfile(filename)  {
-// Read annotation file. Example : %timeinstant \t %value \n
-// Return an array of string
-		var xmlhttp = new XMLHttpRequest();
-		xmlhttp.onreadystatechange = function() {
-			if (xmlhttp.readyState==4 && xmlhttp.status==200)
-				console.log(xmlhttp.responseText);
-		}
-		xmlhttp.open("GET", filename, true);
-		xmlhttp.send();
-	}
-	getdatafromfile("../temp.txt");*/
-	function getdatafromfile(path) {
-		$.ajax({
-			type: "GET",
-			url: path,
-			success: function(resp) {
-				console.log(resp);
-			},
-			error: function(){
-				console.log("NO");
-			}
-		});
-	}
 });
 
 /* user options for changing axis/chart titles */
