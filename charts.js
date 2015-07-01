@@ -23,128 +23,16 @@ var fileList = new Array("a.World.dat", "b.World.dat");
 	}
 }(jQuery));
 
-var spectrumVisible = false;
+var chart; // global chart
+var spectrumVisible = false; // true iff mouseover color inputs visible
 
 $(document).ready(function () {
-	$('#chart').highcharts({
-		chart: {
-			type: 'scatter',
-			renderTo: 'container',
-			zoomType: 'xy'
-		},
+	initChart();
 
-		credits: {
-			enabled: false
-		},
-	
-		title: {
-			useHTML: true,
-			margin: 30,
-			text: 'Title',
-			events: {
-				mouseover: function() {
-					$('#edit-title').visible();
-					var pos = $('#chart').offset();
-					console.log(this);
-					var x = pos.left + this.title.x;
-					var y = pos.top + this.title.y;
-					$('#edit-title').position(x, y);
-					$('#new-title').val(this.options.title.text);
-					$('#new-title-color').val(this.options.title.style.color);
-
-					$('#edit-title').mouseleave(function() {
-						if (!spectrumVisible)
-							$('#edit-title').invisible();
-					});
-				},
-
-				mouseout: function() {
-					if ($('#edit-title:hover').length === 0 && !spectrumVisible)
-						$('#edit-title').invisible();
-				}
-			}
-		},
-
-		xAxis: {
-			events: {
-				afterSetExtremes: function(e) {
-					$('#x-min').val(this.min);
-					$('#x-max').val(this.max);
-				}
-			},
-			title: {
-				text: 'Time (ms)',
-				events: {
-					mouseover: function() {
-						var title = this.chart.options.xAxis[0].title;
-						$('#edit-x-label').visible();
-						var pos = $('#chart').offset();
-						var x = pos.left + this.chart.chartWidth/2.0;
-						var y = pos.top + this.chart.chartHeight - 50;
-						$('#edit-x-label').position(x, y);
-						$('#new-x-label').val(this.options.title.text);
-						$('#new-x-color').val(this.options.title.style.color);
-
-						$('#edit-x-label').mouseleave(function() {
-							if (!spectrumVisible)
-								$('#edit-x-label').invisible();
-						});
-					},
-
-					mouseout: function() {
-						if ($('#edit-x-label:hover').length === 0 && !spectrumVisible)
-							$('#edit-x-label').invisible();
-					}
-				}
-			}
-		},
-			
-		yAxis: {
-			events: {
-				afterSetExtremes: function(e) {
-					$('#y-min').val(this.min);
-					$('#y-max').val(this.max);
-				}
-			},
-			title: {
-				text: 'Count',
-				events: {
-					mouseover: function() {
-						var title = this.chart.options.yAxis[0].title;
-						$('#edit-y-label').visible();
-						var pos = $('#chart').offset();
-						var x = pos.left + 20;
-						var y = pos.top + this.chart.chartHeight/2.0 - 20;
-						$('#edit-y-label').position(x, y);
-						$('#new-y-label').val(this.options.title.text);
-						$('#new-y-color').val(this.options.title.style.color);
-
-						$('#edit-y-label').mouseleave(function() {
-							if (!spectrumVisible)
-								$('#edit-y-label').invisible();
-						});
-					},
-
-					mouseout: function() {
-						if ($('#edit-y-label:hover').length === 0 && !spectrumVisible)
-							$('#edit-y-label').invisible();
-					}
-				}
-			}
-		}
-	});
-
-	$('div #cancel').click(function() {
-		$('.edit').invisible();
-	});
-
-	var chart = $('#chart').highcharts();
-
-	chartLabelOptions(chart);
+	chart = $('#chart').highcharts();
+	changeLabelOptions(chart);
 	chartDisplayOptions(chart);
 	tabs(chart);
-	addSeriesOptions(chart);
-	updateSeriesOptions(chart);
 
 	$('#settings-panel').resizable({
 		handles: 'e',
@@ -172,53 +60,126 @@ $(document).ready(function () {
 	});
 });
 
+/* show title/x-label/y-label options on mouseover */
+function showLabelOptions(labelElem, editElem, newLabelElem, newColorElem, offsetX, offsetY) {
+	editElem.visible();
+	var pos = $('#chart').offset();
+	var x = pos.left + offsetX;
+	var y = pos.top + offsetY;
+	editElem.position(x, y);
+	newLabelElem.val(labelElem.options.title.text);
+	newColorElem.val(labelElem.options.title.style.color);
+
+	editElem.mouseleave(function() {
+		if (!spectrumVisible)
+			editElem.invisible();
+	});
+}
+
+/* initial Highcharts settings */
+function initChart() {
+	$('#chart').highcharts({
+		chart: { type: 'scatter', zoomType: 'xy' },
+		credits: { enabled: false },
+	
+		title: {
+			useHTML: true,
+			margin: 30,
+			text: 'Title',
+			events: {
+				mouseover: function() {
+					showLabelOptions(this, $('#edit-title'), $('#new-title'), $('#new-color'), this.title.x, this.title.y);
+				},
+
+				mouseout: function() {
+					if ($('#edit-title:hover').length === 0 && !spectrumVisible)
+						$('#edit-title').invisible();
+				}
+			}
+		},
+
+		xAxis: {
+			events: {
+				afterSetExtremes: function(e) {
+					$('#x-min').val(this.min);
+					$('#x-max').val(this.max);
+				}
+			},
+			title: {
+				text: 'Time (ms)',
+				events: {
+					mouseover: function() {
+						showLabelOptions(this, $('#edit-x-label'), $('#new-x-label'), $('#new-x-color'), this.chart.chartWidth/2.0, this.chart.chartHeight - 50);
+					},
+
+					mouseout: function() {
+						if ($('#edit-x-label:hover').length === 0 && !spectrumVisible)
+							$('#edit-x-label').invisible();
+					}
+				}
+			}
+		},
+			
+		yAxis: {
+			events: {
+				afterSetExtremes: function(e) {
+					$('#y-min').val(this.min);
+					$('#y-max').val(this.max);
+				}
+			},
+			title: {
+				text: 'Count',
+				events: {
+					mouseover: function() {
+						showLabelOptions(this, $('#edit-y-label'), $('#new-y-label'), $('#new-y-color'), 20, this.chart.chartHeight/2.0 - 20);
+					},
+
+					mouseout: function() {
+						if ($('#edit-y-label:hover').length === 0 && !spectrumVisible)
+							$('#edit-y-label').invisible();
+					}
+				}
+			}
+		}
+
+		, series: [{
+			data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2]
+		}]
+	});
+}
+
 /* user options for changing axis/chart titles */
-function chartLabelOptions(chart) {
+function changeLabelOptions(chart) {
+	$('div #cancel').click(function() {
+		$('.edit').invisible();
+	});
+
 	$('.edit-color').spectrum({
 		showInput: true,
 		preferredFormat: 'hex',
-		show: function(color) {
-			spectrumVisible = true;
-		},
-		hide: function(color) {
-			spectrumVisible = false;
-		}
+		show: function(color) { spectrumVisible = true; },
+		hide: function(color) { spectrumVisible = false; }
 	});
 
 	/* title settings */	
+	function editLabel(labelElem, newLabelElem, newColorElem, editElem) {
+		labelElem.setTitle({
+			text: newLabelElem.val(),
+			style: { color: newColorElem.val() }
+		});
+		editElem.invisible();
+	}
+
 	$('#apply-title').click(function() {
-		chart.setTitle({
-			text: $('#new-title').val(),
-			style: {
-				color: $('#new-title-color').val()
-			}
-		});
-		
-		$('#edit-title').invisible();
+		editLabel(chart, $('#new-title'), $('#new-title-color'), $('#edit-title'));
 	});
 
-	/* x-axis settings */
 	$('#apply-x-label').click(function() {
-		chart.xAxis[0].setTitle({
-			text: $('#new-x-label').val(),
-			style: {
-				color: $('#new-x-color').val()
-			}
-		});
-
-		$('#edit-x-label').invisible();
+		editLabel(chart.xAxis[0], $('#new-x-label'), $('#new-x-color'), $('#edit-x-label'));
 	});
 
-	/* y-axis settings */
 	$('#apply-y-label').click(function() {
-		chart.yAxis[0].setTitle({
-			text: $('#new-y-label').val(),
-			style: {
-				color: $('#new-y-color').val()
-			}
-		});
-
-		$('#edit-y-label').invisible();
+		editLabel(chart.yAxis[0], $('#new-y-label'), $('#new-y-color'), $('#edit-y-label'));
 	});
 }
 
@@ -316,73 +277,6 @@ function tabs(chart) {
 			var firsttab = $("#add-series");
 			firsttab.addClass("current");
 		}
-	});
-}
-
-function updateSeriesOptions(chart) {
-	$('#edit-series-tab #update').click(function() {
-		var curTab = $($('.current').children()[0]);
-		var series = chart.get(curTab.attr('name'));
-
-		var newName = $('#edit-series-tab #series-name').val();
-		var newColor = $('#edit-series-tab #series-color').val();
-
-		series.update({
-			id: newName,
-			name: newName,
-			color: newColor
-		});
-
-		curTab.attr('name', newName)
-			.text(newName);
-	});
-}
-
-function addSeriesOptions(chart) {
-	$('#add-series-tab #submit').click(function() {
-		var seriesName = $('#add-series-tab #series-name').val();
-		if (seriesName.length === 0) {
-			alert("No name entered.");
-			return;
-		}
-
-		if (chart.get(seriesName) != null) {
-			alert("Already a series with this name.");
-			return;
-		}
-
-		var seriesColor = $('#add-series-tab #series-color').val();
-		var seriesData = parseData($('#add-series-tab #series-data').val());
-
-		if (seriesData.length === 0) {
-			alert("Invalid data.");
-			return;
-		}
-
-		chart.addSeries({
-			id: seriesName,
-			name: seriesName,
-			data: seriesData,
-			color: seriesColor
-		});
-
-		lastTab++;
-
-		var newTab = $('<li>')
-			.append($('<a>')
-				.addClass('tab')
-				.attr('id', 'tab-' + lastTab)
-				.attr('name', seriesName)
-				.append(seriesName))
-			.append($('<a>')
-				.attr('href', '#')
-				.addClass('remove')
-				.append('x'));
-
-		$('#tabs').append(newTab);
-		$('#add-series-tab *').val('');
-		$('li.current').removeClass("current");
-		$('.tab-content').invisible();
 	});
 }
 
