@@ -1,5 +1,5 @@
 var dataDir = "test_sim/abc_files/mcell/react_data/seed_00001";
-var fileList = new Array("a.World.dat", "b.World.dat");
+var fileList = ["a.World.dat", "b.World.dat"];
 
 (function($) {
     $.fn.invisible = function() {
@@ -32,32 +32,8 @@ $(document).ready(function () {
 	chart = $('#chart').highcharts();
 	changeLabelOptions();
 	chartDisplayOptions();
-	tabs(chart);
-
-	$('#settings-panel').resizable({
-		handles: 'e',
-		resize: function(event, ui) {
-			var widthPct = 99.0 - 100.0 * ui.size.width/$(window).width();
-			$('#chart-container').css({ 'width': widthPct + '%' });
-
-			chart.setSize($('#chart').width() - 20,
-						$('#chart').height() - 20, false);
-		}
-	});
-	$('#chart-settings').resizable({ handles: 's' });
-	$('#tab-view').resizable({ handles: 's' });
-
-	$('#chart').resizable({
-		resize: function() {
-			var width = this.offsetWidth - 20;
-			var height = this.offsetHeight - 20;
-
-			chart.setSize(width, height, false);
-
-			var marginWidth = 50 - (50.0 * width / $('#chart-container').width());
-			$(this).css({ 'margin-left': marginWidth + '%' });
-		}
-	});
+	initResizable();
+	initSeries();
 });
 
 /* show title/x-label/y-label options on mouseover */
@@ -74,9 +50,16 @@ function showLabelOptions(labelElem, editElem, newLabelElem, newColorElem, offse
 /* initial Highcharts settings */
 function initChart() {
 	$('#chart').highcharts({
-		chart: { type: 'scatter', zoomType: 'xy' },
+		chart: {
+			events: {
+				click: function(event) {
+					$('.edit').invisible();
+				}
+			},
+			type: 'scatter',
+			zoomType: 'xy'
+		},
 		credits: { enabled: false },
-	
 		title: {
 			useHTML: true,
 			margin: 30,
@@ -121,10 +104,6 @@ function initChart() {
 				}
 			}
 		}
-
-		, series: [{
-			data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2]
-		}]
 	});
 }
 
@@ -201,75 +180,76 @@ function chartDisplayOptions() {
 	});
 }
 
-function tabs(chart) {
-	$('#tabs a.tab').live('click', function() {
-		if ($(this).parent().hasClass("current"))	{
-			$(this).parent().removeClass("current");
-			$('.tab-content').invisible();
-			return;
-		}
+function initResizable() {
+	$('#settings-panel').resizable({
+		handles: 'e',
+		resize: function(event, ui) {
+			var widthPct = 99.0 - 100.0 * ui.size.width/$(window).width();
+			$('#chart-container').css({ 'width': widthPct + '%' });
 
-		// hide all other tabs
-		$("#tabs li").removeClass("current");
-		$(this).parent().addClass("current");
-
-		//console.log($(this));
-		if ($(this).attr("id") === "add-series") {
-			$('#edit-series-tab').invisible();
-			$('#add-series-tab').visible();
-		} else {
-			$('#add-series-tab').invisible();
-			$('#edit-series-tab').visible();
-			var seriesName = $(this).attr("name");
-			var series = chart.get(seriesName);
-			
-			$('#edit-series-tab #series-name').val(seriesName);
-			$("#edit-series-tab #series-color").spectrum({
-				color: series.color,
-				showInput: true,
-				preferredFormat: 'hex'
-			});
-
-			$("#edit-series-tab #series-color").val(series.color);
+			chart.setSize($('#chart').width() - 20,
+						$('#chart').height() - 20, false);
 		}
 	});
+	$('#chart-settings').resizable({ handles: 's' });
+	$('#tab-view').resizable({ handles: 's' });
 
-	$('#tabs a.remove').live('click', function() {
-		// confirm deletion (NI)
-		var seriesLink = $(this).parent().children()[0];
-		var seriesName = $(seriesLink).attr('name');
-		console.log(seriesName);
-		if (!confirm('Delete "' + seriesName + '"?'))
-			return;
+	$('#chart').resizable({
+		resize: function() {
+			var width = this.offsetWidth - 20;
+			var height = this.offsetHeight - 20;
 
-		// Get the tab name
-		var tabid = $(this).parent().find(".tab").attr("id");
+			chart.setSize(width, height, false);
 
-		// remove tab and related content
-		$(this).parent().remove();
-		$('#edit-series-tab').invisible();
-		chart.get(seriesName).remove();
-
-		// if there is no current tab and if there are still tabs left, show the first one
-			if ($("#tabs li.current").length == 0 && $("#tabs li").length > 0) {
-
-			// find the first tab    
-			var firsttab = $("#add-series");
-			firsttab.addClass("current");
+			var marginWidth = 50 - (50.0 * width / $('#chart-container').width());
+			$(this).css({ 'margin-left': marginWidth + '%' });
 		}
 	});
 }
 
-/* aux functions */
-function parseData(str) {
-	var strArr = str.split('\n');
-	var series = new Array();	
-	for (var i = 0; i < strArr.length; i++) {
-		var xyStr = strArr[i].split(',');
-		var x = parseInt(xyStr[0]);
-		var y = parseInt(xyStr[1]);
+/* receive data from local .dat file and add to chart */
+function getDataFromFile(seriesName, path) {
+	$.ajax({
+		type: "GET",
+		url: path,
+		success: function(content) {
+			var seriesData = parseContent(content);
+			chart.addSeries({
+				id: seriesName,
+				name: seriesName,
+				data: seriesData,
+			});
+		},
+		error: function(){
+			alert(path + " not found");
+		}
+	});
+}
+
+/* parse .dat file */
+function parseContent(content) {
+	var contentPairs = content.split('\n');
+	var dataPairs = new Array();
+
+	for (var i = 0; i < contentPairs.length; i++) {
+		if (contentPairs[i].length === 0) break;
+		var curPair = contentPairs[i].split(' ');
+		var x = parseFloat(curPair[0]);
+		var y = parseFloat(curPair[1]);
+
 		if (isNaN(x) || isNaN(y)) return [];
-		series.push(new Array(x, y));
+		dataPairs.push(new Array(x, y));
 	}
-	return series;
+
+	return dataPairs;
+}
+
+/* add series list and chart data */
+function initSeries() {
+	for (var i = 0; i < fileList.length; i++) {
+		$('#series-list').append($('<option>')
+			.append(fileList[i])
+			.attr("name", fileList[i]));
+		getDataFromFile(fileList[i], dataDir + '/' + fileList[i]);
+	}
 }
