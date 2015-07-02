@@ -30,8 +30,8 @@ $(document).ready(function () {
 	initChart();
 
 	chart = $('#chart').highcharts();
-	changeLabelOptions(chart);
-	chartDisplayOptions(chart);
+	changeLabelOptions();
+	chartDisplayOptions();
 	tabs(chart);
 
 	$('#settings-panel').resizable({
@@ -69,11 +69,6 @@ function showLabelOptions(labelElem, editElem, newLabelElem, newColorElem, offse
 	editElem.position(x, y);
 	newLabelElem.val(labelElem.options.title.text);
 	newColorElem.val(labelElem.options.title.style.color);
-
-	editElem.mouseleave(function() {
-		if (!spectrumVisible)
-			editElem.invisible();
-	});
 }
 
 /* initial Highcharts settings */
@@ -89,11 +84,6 @@ function initChart() {
 			events: {
 				mouseover: function() {
 					showLabelOptions(this, $('#edit-title'), $('#new-title'), $('#new-color'), this.title.x, this.title.y);
-				},
-
-				mouseout: function() {
-					if ($('#edit-title:hover').length === 0 && !spectrumVisible)
-						$('#edit-title').invisible();
 				}
 			}
 		},
@@ -109,12 +99,7 @@ function initChart() {
 				text: 'Time (ms)',
 				events: {
 					mouseover: function() {
-						showLabelOptions(this, $('#edit-x-label'), $('#new-x-label'), $('#new-x-color'), this.chart.chartWidth/2.0, this.chart.chartHeight - 50);
-					},
-
-					mouseout: function() {
-						if ($('#edit-x-label:hover').length === 0 && !spectrumVisible)
-							$('#edit-x-label').invisible();
+						showLabelOptions(this, $('#edit-x-label'), $('#new-x-label'), $('#new-x-color'), this.chart.chartWidth/2.0, this.chart.chartHeight - 60);
 					}
 				}
 			}
@@ -132,11 +117,6 @@ function initChart() {
 				events: {
 					mouseover: function() {
 						showLabelOptions(this, $('#edit-y-label'), $('#new-y-label'), $('#new-y-color'), 20, this.chart.chartHeight/2.0 - 20);
-					},
-
-					mouseout: function() {
-						if ($('#edit-y-label:hover').length === 0 && !spectrumVisible)
-							$('#edit-y-label').invisible();
 					}
 				}
 			}
@@ -149,7 +129,7 @@ function initChart() {
 }
 
 /* user options for changing axis/chart titles */
-function changeLabelOptions(chart) {
+function changeLabelOptions() {
 	$('div #cancel').click(function() {
 		$('.edit').invisible();
 	});
@@ -184,7 +164,7 @@ function changeLabelOptions(chart) {
 }
 
 /* user options for changing plot range/display */
-function chartDisplayOptions(chart) {
+function chartDisplayOptions() {
 	/* plot options */
 	var xAxis = chart.xAxis[0];
 	var yAxis = chart.yAxis[0];
