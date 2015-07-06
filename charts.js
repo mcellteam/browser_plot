@@ -30,10 +30,12 @@ $(document).ready(function () {
 	initChart();
 
 	chart = $('#chart').highcharts();
+	initSeries();
 	changeLabelOptions();
 	chartDisplayOptions();
 	initResizable();
-	initSeries();
+	seriesOps();
+	editSeriesOptions();
 });
 
 /* show title/x-label/y-label options on mouseover */
@@ -56,7 +58,7 @@ function initChart() {
 					$('.edit').invisible();
 				}
 			},
-			type: 'scatter',
+			type: 'line',
 			zoomType: 'xy'
 		},
 		credits: { enabled: false },
@@ -79,7 +81,7 @@ function initChart() {
 				}
 			},
 			title: {
-				text: 'Time (ms)',
+				text: 'Time (s)',
 				events: {
 					mouseover: function() {
 						showLabelOptions(this, $('#edit-x-label'), $('#new-x-label'), $('#new-x-color'), this.chart.chartWidth/2.0, this.chart.chartHeight - 60);
@@ -159,8 +161,6 @@ function chartDisplayOptions() {
 	$('.plot-range').change(function() {
 		xAxis.setExtremes($('#x-min').val(), $('#x-max').val());
 		yAxis.setExtremes($('#y-min').val(), $('#y-max').val());
-		console.log("run change");
-		console.log(xAxis.min, xAxis.max, yAxis.min, yAxis.max);
 	});
 
 	var curBackground = chart.options.chart.backgroundColor;
@@ -215,9 +215,10 @@ function getDataFromFile(seriesName, path) {
 		success: function(content) {
 			var seriesData = parseContent(content);
 			chart.addSeries({
-				id: seriesName,
-				name: seriesName,
+				animation: false,
 				data: seriesData,
+				id: seriesName,
+				name: seriesName
 			});
 		},
 		error: function(){
@@ -244,7 +245,7 @@ function parseContent(content) {
 	return dataPairs;
 }
 
-/* add series list and chart data */
+/* add series list, chart data, range */
 function initSeries() {
 	for (var i = 0; i < fileList.length; i++) {
 		$('#series-list').append($('<option>')
@@ -252,4 +253,146 @@ function initSeries() {
 			.attr("name", fileList[i]));
 		getDataFromFile(fileList[i], dataDir + '/' + fileList[i]);
 	}
+}
+
+function renameSeries(series, newName) {
+	var prevName = series.name;
+	series.update({
+		id: newName,
+		name: newName
+	});
+
+	$('#series-name').val(newName);
+	$('#series-list option[name="' + prevName + '"]')
+		.attr("name", newName)
+		.text(newName);
+}
+
+function addSeries() {
+	var defaultSeriesName = "Series " + chart.series.length;
+	var newSeries = {
+		animation: false,
+		id: defaultSeriesName,
+		name: defaultSeriesName
+	};
+	chart.addSeries(newSeries);
+		
+	$('#series-list option').removeAttr("selected");
+	$('#series-list').append($('<option selected>')
+		.append(defaultSeriesName)
+		.attr("name", defaultSeriesName));
+
+	$('#set-series').visible();
+	$('#series-name').val(defaultSeriesName);
+}
+
+function changeSeriesFromFile() {
+	var files = ($('#series-data'))[0].files;
+	if (chart.get(files[0].name)) {
+		alert("Series with this name already exists.");
+		return;
+	}
+	// only one series selected
+	// update info + name field
+
+	var selectedOption = $('#series-list').val();
+	if (selectedOption.length > 1) alert("Multiple series selected!");
+
+	var curSeries = chart.get(selectedOption[0]);
+
+	var f = new FileReader();
+	f.onload = function(e) {
+		var content = e.target.result;
+		var seriesData = parseContent(content);
+		curSeries.update({
+			data: seriesData			
+		});
+	}
+
+	renameSeries(curSeries, files[0].name);
+	f.readAsText(files[0]);
+}
+
+function seriesOps() {
+	$('#add-series').click(function() {
+		addSeries();
+	});
+
+	$('#remove-series').click(function() {
+		var selectedOptions = $('#series-list').val();
+		$('#series-list option:selected').remove();
+
+		$.each(selectedOptions, function(_, seriesName) {
+			chart.get(seriesName).remove();
+		});
+	});
+
+	$('#show-all').click(function() {
+		var selectedOptions = $('#series-list').val();
+		$.each(selectedOptions, function(_, seriesName) {
+			chart.get(seriesName).show();
+		});
+	});
+
+	$('#hide-all').click(function() {
+		var selectedOptions = $('#series-list').val();
+		$.each(selectedOptions, function(_, seriesName) {
+			chart.get(seriesName).hide();
+		});
+	});
+}
+
+function seriesSelected() {
+	var selectedOptions = $('#series-list').val();
+	$('#set-series').visible();
+		
+	if (selectedOptions.length > 1) {
+		$('#set-series .one-series').invisible();
+		$('#series-name').invisible();
+		$('#series-data').invisible();
+	} else {
+		var seriesName = selectedOptions[0];
+		$('#series-name').val(seriesName);
+		$('#series-color').val(chart.get(seriesName).color);
+		$('#series-color').spectrum({
+			color: chart.get(seriesName).color,
+			showInput: true,
+			preferredFormat: 'hex'
+		});
+	}
+}
+
+function editSeriesOptions() {
+	$('#series-list').change(function() {
+		seriesSelected();
+	});
+
+	$('#series-data').change(function(e) {
+		changeSeriesFromFile();
+	});
+
+	$('#series-name').change(function() {
+		var selectedOptions = $('#series-list').val();
+		if (selectedOptions.length > 1) {
+			alert("Multiple series selected!");
+		}
+		var curSeries = chart.get(selectedOptions[0]);
+		var newName = $('#series-name').val();
+
+		if (chart.get(newName)) {
+			alert("Series with this name already exists.");
+			return;
+		}
+		renameSeries(curSeries, newName);
+	});
+
+	$('#series-color').change(function() {
+		var selectedOptions = $('#series-list').val();
+		$.each(selectedOptions, function(_, seriesName) {
+			var curSeries = chart.get(seriesName);
+			curSeries.update({
+				color: $('#series-color').val()
+			});
+		});
+	});
 }

@@ -30,32 +30,6 @@
 				<input type = "color" id = "chart-color">
 			</div>
 
-			<div id = "tab-view">
-				<!-- tablist -->
-				<ul id="tabs">
-					<li><a class = "tab" id = "add-series">+</a></li>
-					<!--<li><a class = "tab" id = "tab-1" name = "Series">Series</a><a href = "#" class = "remove">x</a></li>-->
-				</ul>
-
-				<!-- add series content -->
-				<div class = "tab-content" id = "add-series-tab">
-					<b>Name</b> <input type = "text" id = "series-name"> <span/>
-					<b>Color</b> <input type = "color" id = "series-color"><br/>
-					<b>Data</b> <br/><textarea id = "series-data"> </textarea>
-					<br/><button id = "submit">Add series</button>
-				</div>
-
-				<!-- edit series content -->
-				<div class = "tab-content" id = "edit-series-tab">
-					<button id = "add-pts">Add points</button>
-					<button id = "remove-pts">Remove points</button>
-					<button id = "gen-hist">Generate histogram</button>
-					<br/><br/>
-					<b>Name</b> <input type = "text" id = "series-name"> <span/>
-					<b>Color</b> <input type = "color" id = "series-color"> <br/> <button id = "update">Update</button>
-				</div>
-			</div>
-
 			<div id = "series-view">
 				<div class = "select-series">
 					<button id = "add-series">Add</button>
@@ -68,13 +42,13 @@
 					</select>
 				</div>
 				<div id = "set-series">
-					<span/>Upload plot data<br/>
-					<input type = "file"><br/><br/>
+					<span class = "one-series space"></span>
+					<span class = "one-series">Upload plot data</span><br/>
+					<input type = "file" id = "series-data"><br/><br/>
 
-					Name <input type = "text"><br/><br/>
-					Color <input type = "color">
-					<span/> Symbol <select></select>
-					<br/><br/><button>Update</button>
+					<span class = "one-series">Name</span> <input type = "text" id = "series-name"><br/><br/>
+					<span class = "text">Color</span> <input type = "color" id = "series-color">
+					<span class = "space"></span> <span class = "text">Symbol</span> <select id = "series-symbol"></select>
 				</div>
 			</div>
 		</div>

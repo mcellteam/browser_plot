@@ -5,10 +5,6 @@ html, body {
 	padding: 0;
 }
 
-div span {
-	margin-left: 10px;
-}
-
 /* left panel */
 #settings-panel {
 	float: left;
@@ -49,13 +45,14 @@ div span {
 	background: #ededed;
 }
 
-#series-view span {
+#series-view .space {
 	margin-left: 5px;
 	font-size: 12px;
 }
 
 /* contains options */
 #series-view #set-series {
+	display: none;
 	padding: 10px;
 	background: #e1e1e1;
 }
