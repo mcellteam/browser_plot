@@ -281,9 +281,6 @@ function addSeries() {
 	$('#series-list').append($('<option selected>')
 		.append(defaultSeriesName)
 		.attr("name", defaultSeriesName));
-
-	$('#set-series').visible();
-	$('#series-name').val(defaultSeriesName);
 }
 
 function changeSeriesFromFile() {
@@ -316,6 +313,7 @@ function changeSeriesFromFile() {
 function seriesOps() {
 	$('#add-series').click(function() {
 		addSeries();
+		$('#series-list').trigger('change');
 	});
 
 	$('#remove-series').click(function() {
@@ -325,6 +323,8 @@ function seriesOps() {
 		$.each(selectedOptions, function(_, seriesName) {
 			chart.get(seriesName).remove();
 		});
+
+		$('#set-series').invisible();
 	});
 
 	$('#show-all').click(function() {
@@ -345,12 +345,13 @@ function seriesOps() {
 function seriesSelected() {
 	var selectedOptions = $('#series-list').val();
 	$('#set-series').visible();
-		
-	if (selectedOptions.length > 1) {
-		$('#set-series .one-series').invisible();
-		$('#series-name').invisible();
-		$('#series-data').invisible();
-	} else {
+	
+	if (selectedOptions.length === 1) {
+		$('#set-series .one-series').show();
+		$('#series-name').show();
+		$('#series-data').show();
+		$('#series-data').val('');
+
 		var seriesName = selectedOptions[0];
 		$('#series-name').val(seriesName);
 		$('#series-color').val(chart.get(seriesName).color);
@@ -359,6 +360,10 @@ function seriesSelected() {
 			showInput: true,
 			preferredFormat: 'hex'
 		});
+	} else {
+		$('#set-series .one-series').invisible();
+		$('#series-name').invisible();
+		$('#series-data').invisible();
 	}
 }
 
