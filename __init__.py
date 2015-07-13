@@ -19,7 +19,6 @@ def requirements_met():
 def plot(data_path, plot_spec):
 	program_path = os.path.dirname(__file__)
 	python_cmd = find_in_path("python3")
-	print(program_path)
 	#python_cmd = shutil.which("python", mode=os.X_OK)
 
 	if python_cmd is None:
@@ -28,7 +27,10 @@ def plot(data_path, plot_spec):
 		plot_cmd = []
 		plot_cmd.append(python_cmd)
 		plot_cmd.append(os.path.join(program_path, "server.py"))
+		
+		plot_cmd.append(data_path)
+		for spec in plot_spec.split():
+			plot_cmd.append(spec)
 
-		print ("Plotting from: " + data_path)
 		print ("Plotting with: \"" + ' '.join(plot_cmd) + "\"")
 		pid = subprocess.Popen(plot_cmd, cwd = program_path)

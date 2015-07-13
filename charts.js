@@ -1,5 +1,5 @@
-var dataDir = "test_sim/abc_files/mcell/react_data/seed_00001";
-var fileList = ["a.World.dat", "b.World.dat"];
+/*var dataDir = "test_sim/abc_files/mcell/react_data/seed_00001";
+var fileList = ["a.World.dat", "b.World.dat"];*/
 
 (function($) {
     $.fn.invisible = function() {
@@ -27,7 +27,6 @@ var chart; // global chart
 
 $(document).ready(function () {
 	initChart();
-
 	chart = $('#chart').highcharts();
 	initSeries();
 	changeLabelOptions();
@@ -53,7 +52,7 @@ function initChart() {
 		title: {
 			useHTML: true,
 			margin: 30,
-			text: 'Title',
+			text: 'Reaction Data',
 			events: {
 				mouseover: function() {
 					showLabelOptions(this, $('#edit-title'), $('#new-title'), $('#new-color'), this.title.x, this.title.y);
@@ -69,7 +68,6 @@ function initChart() {
 				}
 			},
 			title: {
-				text: 'Time (s)',
 				events: {
 					mouseover: function() {
 						showLabelOptions(this, $('#edit-x-label'), $('#new-x-label'), $('#new-x-color'), this.chart.chartWidth/2.0, this.chart.chartHeight - 60);
@@ -86,7 +84,6 @@ function initChart() {
 				}
 			},
 			title: {
-				text: 'Count',
 				events: {
 					mouseover: function() {
 						showLabelOptions(this, $('#edit-y-label'), $('#new-y-label'), $('#new-y-color'), 20, this.chart.chartHeight/2.0 - 20);
@@ -232,12 +229,13 @@ function initResizable() {
  * seriesName: desired name of new series
  * path: path to file
  */
-function getDataFromFile(seriesName, path) {
+function addSeriesFromFile(seriesName, path) {
 	$.ajax({
 		type: "GET",
 		url: path,
 		dataType: 'text',
 		success: function(content) {
+			console.log(path, content);
 			var seriesData = parseContent(content);
 			chart.addSeries({
 				animation: false,
@@ -246,7 +244,7 @@ function getDataFromFile(seriesName, path) {
 				name: seriesName
 			});
 		},
-		error: function(){
+		error: function() {
 			alert(path + " not found");
 		}
 	});
@@ -270,14 +268,35 @@ function parseContent(content) {
 	return dataPairs;
 }
 
-/* add series list, chart data, range */
+/* read files, add initial series */
 function initSeries() {
-	for (var i = 0; i < fileList.length; i++) {
-		$('#series-list').append($('<option>')
-			.append(fileList[i])
-			.attr("name", fileList[i]));
-		getDataFromFile(fileList[i], dataDir + '/' + fileList[i]);
-	}
+	var plotList;
+
+	$.ajax({
+		type: "POST",
+		url: 'server.py',
+		dataType: 'json',
+		data: 'get_plot_specs',
+		success: function(content) {	
+			plotList = content.plotList;
+
+			chart.xAxis[0].setTitle({ text: content.xlabel });
+			chart.yAxis[0].setTitle({ text: content.ylabel });
+
+			for (var i = 0; i < plotList.length; i++) {
+				var fname = plotList[i].fname;
+				var title = plotList[i].title;
+
+				$('#series-list').append($('<option>')
+					.append(title)
+					.attr("name", title));
+				addSeriesFromFile(title, fname);
+			}
+		},
+		error: function() {
+			alert("error getting file information");
+		}
+	});
 }
 
 /* renames series to newName and replaces relevant options in selection list */
