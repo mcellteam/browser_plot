@@ -64,53 +64,10 @@ html, body {
 	height: 50%;
 }
 
-/* tab + tab content region */
-#tab-view {
-	float: left;
-	width: 30%;
-	height: 100%;
-	display: none; /* unused for now */
-	background: #ededed;
-	padding-left: 10px;
-	border-right: 1px solid #bdbdbd;
-}
-
-/* tab area */
-#tabs {
-	margin: 0;
-	padding: 5px;
-	list-style: none;
-	overflow: hidden;
-}
-
-/* individual tab */
-#tabs li {
-	float: left;
-	display: block;
-	padding: 5px;
-	background-color: #bbb;
-	margin-right: 5px;
-	height: 17px;
-	border-left: 1px solid gray; 
-	border-right: 1px solid gray;
-	border-top: 1px solid gray;
-	z-index: 1;
-}
-
-#tabs li a { color: black; text-decoration: none; }
-#tabs li.current { background-color: #ededed; }
-#tabs li.current a { color: #000; text-decoration: none; }
-#tabs li a.remove {	color: #f00; margin-left: 10px; }
-
-/* displays on tab click */
-.tab-content {
-	padding: 5px;
-	height: 100%;
-	border-left: 1px solid gray;
-	border-top: 1px solid gray;
-	margin-left: 5px;
-	margin-top: -6px;
-	z-index: 2;
+/* series option area */
+#gen-hist a {
+	color: black;
+	text-decoration: none;
 }
 
 /* chart mouseover labels */

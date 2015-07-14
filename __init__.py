@@ -19,15 +19,16 @@ def requirements_met():
 def plot(data_path, plot_spec):
 	program_path = os.path.dirname(__file__)
 	python_cmd = find_in_path("python3")
-	#python_cmd = shutil.which("python", mode=os.X_OK)
+	#python_cmd = shutil.which("python3", mode=os.X_OK)
 
 	if python_cmd is None:
 		print("Unable to plot: python not found in path")
 	else:
 		plot_cmd = []
 		plot_cmd.append(python_cmd)
-		plot_cmd.append(os.path.join(program_path, "server.py"))
-		
+		plot_cmd.append(os.path.join(program_path, "server.py"))	
+
+		print(data_path)
 		plot_cmd.append(data_path)
 		for spec in plot_spec.split():
 			plot_cmd.append(spec)

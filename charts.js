@@ -34,6 +34,7 @@ $(document).ready(function () {
 	initResizable();
 	seriesOps();
 	editSeriesOptions();
+	otherPlots();
 });
 
 /* initial Highcharts settings */
@@ -235,7 +236,6 @@ function addSeriesFromFile(seriesName, path) {
 		url: path,
 		dataType: 'text',
 		success: function(content) {
-			console.log(path, content);
 			var seriesData = parseContent(content);
 			chart.addSeries({
 				animation: false,
@@ -464,5 +464,37 @@ function editSeriesOptions() {
 				}
 			});
 		});
+	});
+}
+
+function otherPlots() {
+	$('#gen-mean').click(function() {
+		var selectedSeries = $('#series-list').val();
+		var firstSeries = chart.get(selectedSeries[0]);
+		var newSeriesData = new Array();
+		$.each(firstSeries.data, function(index, val) {
+			newSeriesData[index] = new Array(0, 0);
+			newSeriesData[index][0] = val.x;
+		});
+
+		$.each(selectedSeries, function(_, seriesName) {
+			var curSeries = chart.get(seriesName);
+			$.each(curSeries.data, function(index, val) {
+				newSeriesData[index][1] += val.y;
+			});
+		});
+		$.each(newSeriesData, function(index, _) {
+			newSeriesData[index][1] /= selectedSeries.length;
+		});
+
+		var defaultSeriesName = "Average " + chart.series.length;
+
+		var newSeries = {
+			animation: false,
+			id: defaultSeriesName,
+			name: defaultSeriesName,
+			data: newSeriesData
+		};
+		chart.addSeries(newSeries);
 	});
 }

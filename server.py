@@ -70,5 +70,4 @@ def run():
 
 if __name__ == '__main__':
 	''' Usage: python3 server.py [data_path] [plot_specs] '''
-
 	run()
