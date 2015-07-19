@@ -1,6 +1,3 @@
-/*var dataDir = "test_sim/abc_files/mcell/react_data/seed_00001";
-var fileList = ["a.World.dat", "b.World.dat"];*/
-
 (function($) {
     $.fn.invisible = function() {
         return this.each(function() {
@@ -23,11 +20,16 @@ var fileList = ["a.World.dat", "b.World.dat"];*/
 	}
 }(jQuery));
 
-var chart; // global chart
+var chart;
+/* master version of series info
+ * key: series name
+ * val: relevant fields
+ * to be updated in sync with current chart
+ */
+var seriesData;
 
 $(document).ready(function () {
 	initChart();
-	chart = $('#chart').highcharts();
 	initSeries();
 	changeLabelOptions();
 	chartDisplayOptions();
@@ -46,7 +48,6 @@ function initChart() {
 					$('.edit').invisible();
 				}
 			},
-			type: 'line',
 			zoomType: 'xy'
 		},
 		credits: { enabled: false },
@@ -93,6 +94,8 @@ function initChart() {
 			}
 		}
 	});
+
+	chart = $('#chart').highcharts();
 }
 
 /* display label edit options
@@ -467,34 +470,64 @@ function editSeriesOptions() {
 	});
 }
 
+function plotMean() {
+	var selectedSeries = $('#series-list').val();
+	var firstSeries = chart.get(selectedSeries[0]);
+	var newSeriesData = new Array();
+	$.each(firstSeries.data, function(index, val) {
+		newSeriesData[index] = new Array(0, 0);
+		newSeriesData[index][0] = val.x;
+	});
+
+	$.each(selectedSeries, function(_, seriesName) {
+		var curSeries = chart.get(seriesName);
+		$.each(curSeries.data, function(index, val) {
+			newSeriesData[index][1] += val.y;
+		});
+	});
+	$.each(newSeriesData, function(index, _) {
+		newSeriesData[index][1] /= selectedSeries.length;
+	});
+
+	var defaultSeriesName = "Average " + chart.series.length;
+
+	var newSeries = {
+		animation: false,
+		id: defaultSeriesName,
+		name: defaultSeriesName,
+		data: newSeriesData
+	};
+	chart.addSeries(newSeries);
+}
+
+function plotLine() {
+
+}
+
+function plotScatter() {
+
+}
+
+function plotHist() {
+
+}
+
 function otherPlots() {
 	$('#gen-mean').click(function() {
-		var selectedSeries = $('#series-list').val();
-		var firstSeries = chart.get(selectedSeries[0]);
-		var newSeriesData = new Array();
-		$.each(firstSeries.data, function(index, val) {
-			newSeriesData[index] = new Array(0, 0);
-			newSeriesData[index][0] = val.x;
-		});
+		plotMean();
+	});
 
-		$.each(selectedSeries, function(_, seriesName) {
-			var curSeries = chart.get(seriesName);
-			$.each(curSeries.data, function(index, val) {
-				newSeriesData[index][1] += val.y;
-			});
-		});
-		$.each(newSeriesData, function(index, _) {
-			newSeriesData[index][1] /= selectedSeries.length;
-		});
+	$('input[type="radio"][name="chart-type"]').change(function() {
+		var mode = $('input[type="radio"][name="chart-type"]:checked').val();
 
-		var defaultSeriesName = "Average " + chart.series.length;
-
-		var newSeries = {
-			animation: false,
-			id: defaultSeriesName,
-			name: defaultSeriesName,
-			data: newSeriesData
-		};
-		chart.addSeries(newSeries);
+		if (mode === "line") {
+			plotLine();
+		} else if (mode == "scatter") {
+			plotScatter();
+		} else if (mode === "hist") {
+			plotHist();
+		} else {
+			alert("Unsupported chart type");
+		}
 	});
 }

@@ -19,14 +19,14 @@ html, body {
 /* top-left */
 #chart-settings {
 	width: 100%;
-	height: 20%;
+	height: 25%;
 	float: left;
 	padding: 10px;
 	border-bottom: 1px solid gray;
 	background: #ededed;
 }
 
-#chart-settings input {	width: 30%; }
+#chart-settings input[type = "number"] {	width: 30%; }
 
 /* middle-left; list view of series/files */
 #series-view {

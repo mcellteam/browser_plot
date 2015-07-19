@@ -7,7 +7,7 @@ import sys
 class MyServer(BaseHTTPRequestHandler):
 	def do_GET(self):
 		if self.path == '/':
-			self.path = '/v1.html'
+			self.path = '/plot-main.html'
 
 		try:
 			if self.path.endswith('.dat'):

@@ -11,7 +11,7 @@
 		<script src='external/customEvents.js'></script>
 		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" />
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-		<link rel="stylesheet", type="text/css", a href = "v1.css" />
+		<link rel="stylesheet", type="text/css", a href = "plot-main.css" />
 	</head>
 
 	<body>
@@ -29,8 +29,12 @@
 				<br/><br/>
 				<b>Chart background</b>
 				<input type = "color" id = "chart-color">
-				<br/>
-				<b>Include line</b> <input id = "chart-type" type = "checkbox" checked>
+				<br/><br/>
+
+				<b>Plot type</b><br/>
+				<input type = "radio" name = "chart-type" value = "line" checked><span/>line
+				<input type = "radio" name = "chart-type" value = "scatter"><span/>scatter
+				<input type = "radio" name = "chart-type" value = "hist"><span/>histogram<br/>
 			</div>
 
 			<!-- series display options -->
@@ -66,7 +70,7 @@
 
 					<br/><br/>
 
-					<button id = "gen-mean">Plot mean</button> 						<button id = "gen-hist"><a href = "hist.html">Generate histogram</a></button>
+					<button id = "gen-mean">Plot mean</button>
 				</div>
 			</div>
 		</div>
@@ -105,6 +109,6 @@
 		</div>
 
 		<!-- main script -->
-		<script src = "charts.js"></script>
+		<script src = "plot-main.js"></script>
 	</body>
 </html>
