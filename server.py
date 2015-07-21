@@ -3,6 +3,7 @@ import os
 import mimetypes
 import json
 import sys
+import webbrowser
 
 class MyServer(BaseHTTPRequestHandler):
 	def do_GET(self):
@@ -63,6 +64,7 @@ def run():
 		print('server running...')
 		server_address = ('127.0.0.1', 8000)
 		httpd = HTTPServer(server_address, MyServer)
+		webbrowser.open('http://127.0.0.1:8000')
 		print('server running...')
 		httpd.serve_forever()
 	except KeyboardInterrupt:

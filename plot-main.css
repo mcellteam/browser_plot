@@ -28,6 +28,10 @@ html, body {
 
 #chart-settings input[type = "number"] {	width: 30%; }
 
+#chart-settings .on-plot:not(#line-scatter) {
+	display: none;
+}
+
 /* middle-left; list view of series/files */
 #series-view {
 	float: left;

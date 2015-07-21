@@ -19,14 +19,24 @@
 		<div id = "settings-panel">
 			<!-- plot range and chart display options -->
 			<div id = "chart-settings">
-				<b>Plot range</b><br/>
-				<b>x</b> from
-				<input type = "number" id = "x-min" class = "plot-range">
-				to <input type = "number" id = "x-max" class = "plot-range">
-				<br/>
-				<b>y</b> from <input type = "number" id = "y-min" class = "plot-range">
-				to <input type = "number" id = "y-max" class = "plot-range">
-				<br/><br/>
+
+
+				<div id = "line-scatter" class = "on-plot">
+					<b>Plot range</b><br/>
+					<b>x</b> from
+					<input type = "number" id = "x-min" class = "plot-range">
+					to <input type = "number" id = "x-max" class = "plot-range">
+					<br/>
+					<b>y</b> from <input type = "number" id = "y-min" class = "plot-range">
+					to <input type = "number" id = "y-max" class = "plot-range">
+				</div>
+
+
+				<div id = "hist" class = "on-plot">
+					<b>Bin count</b> <input type = "number" id = "bin-count"> <br/>
+				</div>
+
+
 				<b>Chart background</b>
 				<input type = "color" id = "chart-color">
 				<br/><br/>
