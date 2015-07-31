@@ -39,14 +39,13 @@ $(document).ready(function () {
 	changeLabelOptions();
 	chartDisplayOptions();
 	initResizable();
-	editSeriesOptions();
 	otherPlots();
 });
 
 /*******************************************************
 	shortcuts for accessing properties of chart state
 *******************************************************/
-function mode() { return $('input[type="radio"][name="chart-type"]:checked').val(); }
+function getMode() { return $('input[type="radio"][name="chart-type"]:checked').val(); }
 
 function getSeriesType(mode) {
 	if (mode === "line" || mode === "scatter") return mode;
@@ -86,7 +85,7 @@ function initChart() {
 		xAxis: {
 			events: {
 				afterSetExtremes: function(e) {
-					if (mode() === "line" || mode() === "scatter") {
+					if (getMode() === "line" || getMode() === "scatter") {
 						$('#x-min').val(this.min);
 						$('#x-max').val(this.max);
 					}
@@ -106,7 +105,7 @@ function initChart() {
 		yAxis: {
 			events: {
 				afterSetExtremes: function(e) {
-					if (mode() === "line" || mode() === "scatter") {
+					if (getMode() === "line" || getMode() === "scatter") {
 						$('#y-min').val(this.min);
 						$('#y-max').val(this.max);
 					}
@@ -324,7 +323,7 @@ function addSeriesFromFile(seriesName, path) {
 		success: function(content) {
 			var seriesData = parseContent(content);
 			chart.addSeries({
-				data: dataAsType(seriesData, mode()),
+				data: dataAsType(seriesData, getMode()),
 				id: seriesName,
 				name: seriesName
 			});
@@ -401,7 +400,7 @@ function addEmptySeries() {
 	var newSeries = {
 		id: defaultSeriesName,
 		name: defaultSeriesName,
-		type: getSeriesType(mode())
+		type: getSeriesType(getMode())
 	};
 	chart.addSeries(newSeries);
 	masterSeriesData[defaultSeriesName] = newSeries.data;
@@ -603,7 +602,7 @@ function plotMean() {
 		id: defaultSeriesName,
 		name: defaultSeriesName,
 		data: newSeriesData,
-		type: getSeriesType(mode())
+		type: getSeriesType(getMode())
 	};
 	chart.addSeries(newSeries);
 	masterSeriesData[defaultSeriesName] = newSeriesData;
@@ -621,7 +620,7 @@ function plotMean() {
 
 function otherPlots() {
 	$('input[type="radio"][name="chart-type"]').change(function() {
-		var mode = mode();
+		var mode = getMode();
 
 		if (mode === "line") {
 			plotLS("line");
