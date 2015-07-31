@@ -19,8 +19,6 @@
 		<div id = "settings-panel">
 			<!-- plot range and chart display options -->
 			<div id = "chart-settings">
-
-
 				<div id = "line-scatter" class = "on-plot">
 					<b>Plot range</b><br/>
 					<b>x</b> from
@@ -39,6 +37,10 @@
 
 				<b>Chart background</b>
 				<input type = "color" id = "chart-color">
+				<br/>
+
+				<b>Show legend</b>
+				<input type = "checkbox" id = "toggle-legend" checked>
 				<br/><br/>
 
 				<b>Plot type</b><br/>
@@ -90,29 +92,34 @@
 			<div id = "chart"></div>
 		</div>
 
-		<!-- .edit windows shown on mouseover -->
 		<!-- edit chart title -->
-		<div class = "edit" id = "edit-title">
-			Title <input type = "text" id = "new-title"><br/>
-			Text color <span/> <input type = "color" class = "edit-color" id = "new-title-color"> <br/>
-			<button id = 'apply-title'>Apply</button>
-			<button id = 'cancel'>Cancel</button>
+		<div class = "edit-label" name = "title">
+			Title <input type = "text" class = "label-text"><br/>
+			Font <select class = "label-font"><option>Times New Roman</option></select><br/>
+			<input type = "color" class = "label-color"> <span></span>
+			<input type = "number" class = "label-size"> <span></span> <br/>
+			<button class = 'apply-label'>Apply</button>
+			<button class = 'cancel'>Cancel</button>
 		</div>
 
 		<!-- edit x-axis label -->
-		<div class = "edit" id = "edit-x-label">
-			Title <input type = "text" id = "new-x-label"><br/>
-			Text color <span/> <input type = "color" class = "edit-color" id = "new-x-color"> <br/>
-			<button id = 'apply-x-label'>Apply</button>
-			<button id = 'cancel'>Cancel</button>
+		<div class = "edit-label" name = "x-label">
+			Title <input type = "text" class = "label-text"><br/>
+			Font <select class = "label-font"><option>Times New Roman</option></select><br/>
+			<input type = "color" class = "label-color"> <span></span>
+			<input type = "number" class = "label-size"> <span></span> <br/>
+			<button class = 'apply-label'>Apply</button>
+			<button class = 'cancel'>Cancel</button>
 		</div>
 
 		<!-- edit y-axis label -->
-		<div class = "edit" id = "edit-y-label">
-			Title <input type = "text" id = "new-y-label"><br/>
-			Text color <span/> <input type = "color" class = "edit-color" id = "new-y-color"> <br/>
-			<button id = 'apply-y-label'>Apply</button>
-			<button id = 'cancel'>Cancel</button>
+		<div class = "edit-label" name = "y-label">
+			Title <input type = "text" class = "label-text"><br/>
+			Font <select class = "label-font"><option>Times New Roman</option></select><br/>
+			<input type = "color" class = "label-color"> <span></span>
+			<input type = "number" class = "label-size"> <span></span> <br/>
+			<button class = 'apply-label'>Apply</button>
+			<button class = 'cancel'>Cancel</button>
 		</div>
 
 		<!-- main script -->

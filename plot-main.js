@@ -23,7 +23,7 @@
 var chart;
 /* master version of series info
  * key: series name
- * val: relevant fields
+ * val: data
  * to be updated in sync with current chart
  */
 var masterSeriesData;
@@ -34,29 +34,35 @@ var histOptions;
 
 $(document).ready(function () {
 	initChart();
-	initSeries();
+	initData();
+	initSeriesList();
 	changeLabelOptions();
 	chartDisplayOptions();
 	initResizable();
-	seriesOps();
 	editSeriesOptions();
 	otherPlots();
-
-	$('#series-list').click(function(e) {
-		if (e.target == this) {
-			$('#series-list option').removeAttr("selected");
-			$('#series-list').change();
-		}
-	});
 });
 
-/* initial Highcharts settings */
+/*******************************************************
+	shortcuts for accessing properties of chart state
+*******************************************************/
+function mode() { return $('input[type="radio"][name="chart-type"]:checked').val(); }
+
+function getSeriesType(mode) {
+	if (mode === "line" || mode === "scatter") return mode;
+	else if (mode === "hist") return "column";
+	alert("Invalid mode!");
+}
+
+/*********************************************
+	initial chart/settings
+********************************************/
 function initChart() {
 	$('#chart').highcharts({
 		chart: {
 			events: {
 				click: function(event) {
-					$('.edit').invisible();
+					$('.edit-label').invisible();
 				}
 			},
 			zoomType: 'xy'
@@ -68,8 +74,12 @@ function initChart() {
 			text: 'Reaction Data',
 			events: {
 				click: function() {
-					showLabelOptions(this, $('#edit-title'), $('#new-title'), $('#new-color'), this.title.x, this.title.y);
+					showLabelOptions(this, $('.edit-label[name="title"]'), this.title.x, this.title.y);
 				}
+			},
+			style: {
+				fontFamily: 'Lucida Grande',
+				fontSize: '18px'
 			}
 		},
 
@@ -85,9 +95,11 @@ function initChart() {
 			title: {
 				events: {
 					click: function() {
-						showLabelOptions(this, $('#edit-x-label'), $('#new-x-label'), $('#new-x-color'), this.chart.chartWidth/2.0, this.chart.chartHeight - 60);
+						showLabelOptions(this, $('.edit-label[name="x-label"]'), this.chart.chartWidth/2.0, this.chart.chartHeight - 60);
 					}
-				}
+				},
+
+				style: { fontSize: '12px', fontFamily: 'Lucida Grande' }
 			}
 		},
 			
@@ -103,17 +115,21 @@ function initChart() {
 			title: {
 				events: {
 					click: function() {
-						showLabelOptions(this, $('#edit-y-label'), $('#new-y-label'), $('#new-y-color'), 20, this.chart.chartHeight/2.0 - 20);
+						showLabelOptions(this, $('.edit-label[name="y-label"]'), 20, this.chart.chartHeight/2.0 - 20);
 					}
-				}
+				},
+
+				style: { fontSize: '12px', fontFamily: 'Lucida Grande' }
 			}
 		},
 
 		plotOptions: {
-            series: {
-                cursor: 'pointer',
-                events: {
-                    click: function (event) {
+			series: {
+				animation: false,
+				cursor: 'pointer',
+				events: {
+					click: function (event) {
+						// select in sidebar
 						var seriesOption = $('#series-list option[name="' + this.name + '"]');
 						if (seriesOption.prop("selected")) {
 							seriesOption.removeProp("selected");
@@ -131,21 +147,37 @@ function initChart() {
 
 	histOptions = {
 		binCount: 10
-	}
+	};
 }
+/*********************************************
+	various chart display functions follow
+********************************************/
 
 /* display label edit options
  * labelElem: element containing label
  * editElem: element containing edit options
  */
-function showLabelOptions(labelElem, editElem, newLabelElem, newColorElem, offsetX, offsetY) {
+function showLabelOptions(labelElem, editElem, offsetX, offsetY) {
 	editElem.visible();
 	var pos = $('#chart').offset();
 	var x = pos.left + offsetX;
 	var y = pos.top + offsetY;
 	editElem.position(x, y);
-	newLabelElem.val(labelElem.options.title.text);
-	newColorElem.val(labelElem.options.title.style.color);
+	editElem.children('.label-text')
+		.val(labelElem.options.title.text);
+	editElem.children('.label-color')
+		.val(labelElem.options.title.style.color);
+	editElem.children('.label-size')
+		.val(parseInt(labelElem.options.title.style.fontSize));
+}
+
+function getLabelElem(eName) {
+	switch (eName) {
+		case "title": return chart;
+		case "x-label": return chart.xAxis[0];
+		case "y-label": return chart.yAxis[0]; 
+		default: alert("error");
+	}
 }
 
 /* user options for changing axis/chart titles
@@ -153,34 +185,27 @@ function showLabelOptions(labelElem, editElem, newLabelElem, newColorElem, offse
  * hidden on cancel/chart/apply click
  */
 function changeLabelOptions() {
-	$('div #cancel').click(function() {
-		$('.edit').invisible();
+	$('.cancel').click(function() {
+		$('.edit-label').invisible();
 	});
 
-	$('.edit-color').spectrum({
+	$('.label-color').spectrum({
 		showInput: true,
 		preferredFormat: 'hex'
 	});
 
-	/* title settings */	
-	function editLabel(labelElem, newLabelElem, newColorElem, editElem) {
+	$('.apply-label').click(function() {
+		var parent = $(this).parent();
+		var labelElem = getLabelElem(parent.attr("name"));
 		labelElem.setTitle({
-			text: newLabelElem.val(),
-			style: { color: newColorElem.val() }
+			text: parent.children('.label-text').val(),
+			style: {
+				color: parent.children('.label-color').val(),
+				fontSize: parent.children('.label-size').val() + 'px'
+			}
 		});
-		editElem.invisible();
-	}
 
-	$('#apply-title').click(function() {
-		editLabel(chart, $('#new-title'), $('#new-title-color'), $('#edit-title'));
-	});
-
-	$('#apply-x-label').click(function() {
-		editLabel(chart.xAxis[0], $('#new-x-label'), $('#new-x-color'), $('#edit-x-label'));
-	});
-
-	$('#apply-y-label').click(function() {
-		editLabel(chart.yAxis[0], $('#new-y-label'), $('#new-y-color'), $('#edit-y-label'));
+		$('.edit-label').invisible();
 	});
 }
 
@@ -214,7 +239,7 @@ function chartDisplayOptions() {
 		chart.chartBackground.css({
 			color: $('#chart-color').val()
 		});
-		$('#chart-resizer').css("background", $('#chart-color').val());
+		$('#chart').css("background", $('#chart-color').val());
 	});
 
 	/* histogram settings */
@@ -223,7 +248,16 @@ function chartDisplayOptions() {
 		histOptions.binCount = parseInt(binCount);
 		updateHistOptions();
 		updateCategories();
-		updateSeries();
+		updateSeriesMode("hist");
+	});
+
+	$('#toggle-legend').click(function() {
+		var e = $('#toggle-legend');
+		if (e.prop("checked")) {
+			$('.highcharts-legend').visible();
+		} else {
+			$('.highcharts-legend').invisible();
+		}
 	});
 }
 
@@ -255,31 +289,14 @@ function initResizable() {
 	});
 }
 
+/***********************************************
+	functions for initializing series follow
+***********************************************/
+
 /* receives and parses data from local file and adds to chart
  * seriesName: desired name of new series
  * path: path to file
  */
-function addSeriesFromFile(seriesName, path) {
-	$.ajax({
-		type: "GET",
-		url: path,
-		dataType: 'text',
-		success: function(content) {
-			var seriesData = parseContent(content);
-			chart.addSeries({
-				animation: false,
-				data: dataAsType(seriesData, $('input[type="radio"][name="chart-type"]:checked').val()),
-				id: seriesName,
-				name: seriesName
-			});
-
-			masterSeriesData[seriesName] = seriesData;
-		},
-		error: function() {
-			alert(path + " not found");
-		}
-	});
-}
 
 /* converts file content to array data */
 function parseContent(content) {
@@ -299,8 +316,34 @@ function parseContent(content) {
 	return dataPairs;
 }
 
+function addSeriesFromFile(seriesName, path) {
+	$.ajax({
+		type: "GET",
+		url: path,
+		dataType: 'text',
+		success: function(content) {
+			var seriesData = parseContent(content);
+			chart.addSeries({
+				data: dataAsType(seriesData, mode()),
+				id: seriesName,
+				name: seriesName
+			});
+
+			// todo: check for duplicate series
+			masterSeriesData[seriesName] = seriesData;
+		},
+		error: function() {
+			alert(path + " not found");
+		}
+	}).done(function() {
+		chart.zoom();
+	});
+}
+
+
+
 /* read files, add initial series */
-function initSeries() {
+function initData() {
 	masterSeriesData = { };
 	var plotList;
 
@@ -331,6 +374,10 @@ function initSeries() {
 	});
 }
 
+/*********************************************
+	functions for series operations follow
+*********************************************/
+
 /* renames series to newName and replaces relevant options in selection list */
 function renameSeries(series, newName) {
 	var prevName = series.name;
@@ -349,18 +396,19 @@ function renameSeries(series, newName) {
 }
 
 /* initiate empty series in chart and selection list */
-function addSeries() {
+function addEmptySeries() {
 	var defaultSeriesName = "Series " + chart.series.length;
 	var newSeries = {
-		animation: false,
 		id: defaultSeriesName,
 		name: defaultSeriesName,
 		type: getSeriesType(mode())
 	};
 	chart.addSeries(newSeries);
 	masterSeriesData[defaultSeriesName] = newSeries.data;
+
+	// todo: check for duplicate series
 		
-	$('#series-list option').removeAttr("selected");
+	$('#series-list option').removeProp("selected");
 	$('#series-list').append($('<option selected>')
 		.append(defaultSeriesName)
 		.attr("name", defaultSeriesName));
@@ -375,7 +423,10 @@ function changeSeriesFromFile() {
 	}
 
 	var selectedOption = $('#series-list').val();
-	if (selectedOption.length > 1) alert("Multiple series selected!");
+	if (selectedOption.length > 1) {
+		alert("Multiple series selected!");
+		return;
+	}
 
 	var curSeries = chart.get(selectedOption[0]);
 
@@ -392,11 +443,26 @@ function changeSeriesFromFile() {
 	f.readAsText(files[0]);
 }
 
+/*********************************************
+	functions for series sidebar follow
+*********************************************/
+
 /* display operations on multiple series */
-function seriesOps() {
+function seriesListOps() {
+	$('#series-list').click(function(e) {
+		if (e.target == this) {
+			$('#series-list option').removeProp("selected");
+			$('#series-list').change();
+		}
+	});
+
+	$('#series-list').change(function() {
+		seriesSelected();
+	});
+
 	$('#add-series').click(function() {
-		addSeries();
-		$('#series-list').trigger('change');
+		addEmptySeries();
+		$('#series-list').change();
 	});
 
 	$('#remove-series').click(function() {
@@ -459,10 +525,6 @@ function seriesSelected() {
 
 /* options for editing currently selected series */
 function editSeriesOptions() {
-	$('#series-list').change(function() {
-		seriesSelected();
-	});
-
 	$('#series-data').change(function(e) {
 		changeSeriesFromFile();
 	});
@@ -505,6 +567,15 @@ function editSeriesOptions() {
 			});
 		});
 	});
+
+	$('#gen-mean').click(function() {
+		plotMean();
+	});
+}
+
+function initSeriesList() {
+	editSeriesOptions();
+	seriesListOps();
 }
 
 function plotMean() {
@@ -529,7 +600,6 @@ function plotMean() {
 	var defaultSeriesName = "Average " + chart.series.length;
 
 	var newSeries = {
-		animation: false,
 		id: defaultSeriesName,
 		name: defaultSeriesName,
 		data: newSeriesData,
@@ -545,26 +615,25 @@ function plotMean() {
 	$('#series-list').change();
 }
 
-function dataAsType(data, mode) {
-	if (mode === "line" || mode === "scatter") return data;
-	else if (mode === "hist") {
-		var binCount = histOptions.binCount;
-		var seriesData = new Array();
-		for (var i = 0; i < binCount; i++) seriesData.push(0);
+/********************
+	switching modes
+********************/
 
-		var binSize = histOptions.binSize;
-		var extremes = getDataExtremes();
+function otherPlots() {
+	$('input[type="radio"][name="chart-type"]').change(function() {
+		var mode = mode();
 
-		$.each(data, function(_, pt) {
-			var binIndex = Math.floor((pt[1] - extremes[0])/binSize);
-			seriesData[binIndex]++;
-		});
-
-		console.log(seriesData);
-		return seriesData;
-	} else {
-		alert("Datatype not supported");
-	}
+		if (mode === "line") {
+			plotLS("line");
+		} else if (mode == "scatter") {
+			plotLS("scatter");
+		} else if (mode === "hist") {
+			chart.zoom();
+			plotHist();
+		} else {
+			alert("Unsupported chart type");
+		}
+	});
 }
 
 function getDataExtremes() {
@@ -583,14 +652,37 @@ function getDataExtremes() {
 	return extremes;
 }
 
-function updateHistOptions() {
-	//var yAxis = chart.yAxis[0];
-	var binCount = histOptions.binCount;
-	var extremes = getDataExtremes();
-	var binSize = Math.floor((extremes[1] - extremes[0])/binCount) + 1;
+function updateSeriesMode(mode) {
+	if (mode === "hist") {
+		$.each(chart.series, function(_, series) {
+			var seriesData = masterSeriesData[series.name];
+			series.update({
+				data: dataAsType(seriesData, "hist"),
+				type: 'column'
+			});
+		});
+	}
+}
 
-	$('#bin-count').val(binCount);
-	histOptions.binSize = binSize;
+function dataAsType(data, mode) {
+	if (mode === "line" || mode === "scatter") return data;
+	else if (mode === "hist") {
+		var binCount = histOptions.binCount;
+		var seriesData = new Array();
+		for (var i = 0; i < binCount; i++) seriesData.push(0);
+
+		var binSize = histOptions.binSize;
+		var extremes = getDataExtremes();
+
+		$.each(data, function(_, pt) {
+			var binIndex = Math.floor((pt[1] - extremes[0])/binSize);
+			seriesData[binIndex]++;
+		});
+
+		return seriesData;
+	} else {
+		alert("Datatype not supported");
+	}
 }
 
 function plotLS(mode) {
@@ -605,6 +697,25 @@ function plotLS(mode) {
 	});
 	
 	chart.zoom();
+}
+
+function updateInMode(mode) {
+	if (mode === "hist") {
+		updateCategories();
+	}
+}
+
+/*************************
+	histogram mode
+*************************/
+function updateHistOptions() {
+	//var yAxis = chart.yAxis[0];
+	var binCount = histOptions.binCount;
+	var extremes = getDataExtremes();
+	var binSize = Math.floor((extremes[1] - extremes[0])/binCount) + 1;
+
+	$('#bin-count').val(binCount);
+	histOptions.binSize = binSize;
 }
 
 function updateCategories() {
@@ -622,52 +733,13 @@ function updateCategories() {
 	chart.xAxis[0].setCategories(categories);
 }
 
-function updateSeries() {
-	$.each(chart.series, function(_, series) {
-		var seriesData = masterSeriesData[series.name];
-		series.update({
-			data: dataAsType(seriesData, "hist"),
-			type: 'column'
-		});
-	});
-}
-
 function plotHist() {
 	$('#chart-settings #hist').visible();
 	$('#chart-settings .on-plot').not($('#hist')).invisible();
 
 	updateHistOptions();	
 	updateCategories();
-	updateSeries();
+	updateSeriesMode("hist");
 
 	chart.zoom();
-}
-
-function mode() { return $('input[type="radio"][name="chart-type"]:checked').val(); }
-
-function otherPlots() {
-	$('#gen-mean').click(function() {
-		plotMean();
-	});
-
-	$('input[type="radio"][name="chart-type"]').change(function() {
-		var mode = $('input[type="radio"][name="chart-type"]:checked').val();
-
-		if (mode === "line") {
-			plotLS("line");
-		} else if (mode == "scatter") {
-			plotLS("scatter");
-		} else if (mode === "hist") {
-			chart.zoom();
-			plotHist();
-		} else {
-			alert("Unsupported chart type");
-		}
-	});
-}
-
-function getSeriesType(mode) {
-	if (mode === "line" || mode === "scatter") return mode;
-	else if (mode === "hist") return "column";
-	alert("Invalid mode!");
 }

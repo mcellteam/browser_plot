@@ -74,23 +74,30 @@ html, body {
 	text-decoration: none;
 }
 
-/* chart mouseover labels */
-.edit {
+/* chart click labels */
+.edit-label {
 	background-color: #FCF79F;
 	position: absolute;
 	display: none;
 	padding: 10px;
-	width: 220px;
-	height: 90px;
+	width: 200px;
+	height: 100px;
 	font-size: 13px;
 }
 
-.edit span {
+.edit-label span {
 	margin-left: 10px;
 }
 
-.edit input[type="number"] {
-	width: 30%;
+.edit-label input[type="number"] {
+	width: 35px;
+	height: 25px;
+	font-size: 15px;
+}
+
+.edit-label .sp-replacer {
+	width: 30px;
+	height: 20px;
 }
 
 button {
