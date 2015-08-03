@@ -276,6 +276,7 @@ function initResizable() {
 	$('#tab-view').resizable({ handles: 's' });
 
 	$('#chart').resizable({
+		handles: 'se',
 		resize: function() {
 			var width = this.offsetWidth - 20;
 			var height = this.offsetHeight - 20;
