@@ -32,7 +32,7 @@ var masterSeriesData;
  */
 var histOptions;
 
-$(document).ready(function () {
+$(window).load(function () {
 	initChart();
 	initData();
 	initSeriesList();
@@ -57,13 +57,14 @@ function getSeriesType(mode) {
 	initial chart/settings
 ********************************************/
 function initChart() {
-	$('#chart').highcharts({
+	chart = new Highcharts.Chart({
 		chart: {
 			events: {
 				click: function(event) {
 					$('.edit-label').invisible();
 				}
 			},
+			renderTo: 'chart',
 			zoomType: 'xy'
 		},
 		credits: { enabled: false },
@@ -141,8 +142,6 @@ function initChart() {
             }
         },
 	});
-
-	chart = $('#chart').highcharts();
 
 	histOptions = {
 		binCount: 10
@@ -316,7 +315,7 @@ function parseContent(content) {
 	return dataPairs;
 }
 
-function addSeriesFromFile(seriesName, path) {
+function addSeriesFromPath(seriesName, path) {
 	$.ajax({
 		type: "GET",
 		url: path,
@@ -365,7 +364,7 @@ function initData() {
 				$('#series-list').append($('<option>')
 					.append(title)
 					.attr("name", title));
-				addSeriesFromFile(title, fname);
+				addSeriesFromPath(title, fname);
 			}
 		},
 		error: function() {
@@ -443,6 +442,26 @@ function changeSeriesFromFile() {
 	f.readAsText(files[0]);
 }
 
+function addSeriesFromFile(file) {
+	var reader = new FileReader();
+	reader.onload = function(e) {
+		var content = e.target.result;
+		var seriesData = parseContent(content);
+		var defaultSeriesName = file.name;
+
+		/* todo: check for duplicates */
+		masterSeriesData[defaultSeriesName] = seriesData;
+		var newSeries = {
+			id: defaultSeriesName,
+			name: defaultSeriesName,
+			data: seriesData,
+			type: getSeriesType(getMode())
+		};
+		chart.addSeries(newSeries);
+	}
+	reader.readAsText(file);
+}
+
 /*********************************************
 	functions for series sidebar follow
 *********************************************/
@@ -460,9 +479,12 @@ function seriesListOps() {
 		seriesSelected();
 	});
 
-	$('#add-series').click(function() {
-		addEmptySeries();
-		$('#series-list').change();
+	$('#add-series').change(function() {
+		var fileList = ($('#add-series'))[0].files;
+		for (var i = 0; i < fileList.length; i++) {
+			addSeriesFromFile(fileList[i]);
+		}
+		$('#add-series').val('');
 	});
 
 	$('#remove-series').click(function() {

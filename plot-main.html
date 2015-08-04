@@ -3,14 +3,9 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Main plot</title>
-		<script src="external/jquery.min.js"></script> <!-- 1.10.2 -->
-		<script src="external/highcharts.js"></script>
-		<script src="http://code.highcharts.com/modules/exporting.js"></script>
-		<script src='external/spectrum.js'></script>
+		<script src="external/all-min.js"></script>
 		<link rel='stylesheet' href='external/spectrum.css' />
-		<script src='external/customEvents.js'></script>
 		<link rel="stylesheet" href="external/jquery-ui-1.11.4.custom/jquery-ui.min.css" />
-		<script src="external/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 		<link rel="stylesheet", type="text/css", a href = "plot-main.css" />
 	</head>
 
@@ -53,8 +48,7 @@
 			<div id = "series-view">
 				<!-- series list area -->
 				<div class = "select-series">
-					<button id = "add-series">Add</button>
-					<button id = "remove-series">Remove</button></br>
+					<button id = "remove-series">Remove</button>
 					<button id = "show-all">Show</button>
 					<button id = "hide-all">Hide</button><br/><br/>
 
@@ -62,9 +56,13 @@
 
 					<!-- option name and value equal series name -->
 					<select multiple size = "7" id = "series-list">
-					</select>
+					</select><br /><br />
+
+					<span>&nbsp;</span>Add series <br/>
+					<input type = "file" id = "add-series" multiple>
 				</div>
 				<div id = "set-series">
+					<span class = "one-series">&nbsp;</span><br />
 					<span class = "one-series space"></span>
 					<span class = "one-series">Upload plot data</span><br/>
 					<input type = "file" id = "series-data"><br/><br/>
