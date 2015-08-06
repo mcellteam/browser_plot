@@ -15,33 +15,33 @@
 			<!-- plot range and chart display options -->
 			<div id = "chart-settings">
 				<div id = "line-scatter" class = "on-plot">
-					<b>Plot range</b><br/>
+					<b>Plot range</b><br />
 					<b>x</b> from
 					<input type = "number" id = "x-min" class = "plot-range">
 					to <input type = "number" id = "x-max" class = "plot-range">
-					<br/>
+					<br />
 					<b>y</b> from <input type = "number" id = "y-min" class = "plot-range">
 					to <input type = "number" id = "y-max" class = "plot-range">
 				</div>
 
 
 				<div id = "hist" class = "on-plot">
-					<b>Bin count</b> <input type = "number" id = "bin-count"> <br/>
+					<b>Bin count</b> <input type = "number" id = "bin-count"> <br />
 				</div>
 
 
 				<b>Chart background</b>
 				<input type = "color" id = "chart-color">
-				<br/>
+				<br />
 
 				<b>Show legend</b>
 				<input type = "checkbox" id = "toggle-legend" checked>
-				<br/><br/>
+				<br /><br />
 
 				<b>Plot type</b><br/>
 				<input type = "radio" name = "chart-type" value = "line" checked><span/>line
 				<input type = "radio" name = "chart-type" value = "scatter"><span/>scatter
-				<input type = "radio" name = "chart-type" value = "hist"><span/>histogram<br/>
+				<input type = "radio" name = "chart-type" value = "hist"><span/>histogram<br />
 			</div>
 
 			<!-- series display options -->
@@ -50,22 +50,22 @@
 				<div class = "select-series">
 					<button id = "remove-series">Remove</button>
 					<button id = "show-all">Show</button>
-					<button id = "hide-all">Hide</button><br/><br/>
+					<button id = "hide-all">Hide</button><br /><br />
 
-					<input type = "text" id = "search-series"><br/>
+					<input type = "text" id = "search-series"><br />
 
 					<!-- option name and value equal series name -->
 					<select multiple size = "7" id = "series-list">
 					</select><br /><br />
 
-					<span>&nbsp;</span>Add series <br/>
+					<span>&nbsp;</span>Add series <br />
 					<input type = "file" id = "add-series" multiple>
 				</div>
 				<div id = "set-series">
 					<span class = "one-series">&nbsp;</span><br />
 					<span class = "one-series space"></span>
-					<span class = "one-series">Upload plot data</span><br/>
-					<input type = "file" id = "series-data"><br/><br/>
+					<span class = "one-series">Upload plot data</span><br />
+					<input type = "file" id = "series-data"><br /><br/>
 
 					<span class = "one-series">Name</span> <input type = "text" id = "series-name"><br/><br/>
 					<span class = "text">Color</span> <input type = "color" id = "series-color">
@@ -78,7 +78,7 @@
 						<option name = "triangle-down">triangle-down</option>
 					</select>
 
-					<br/><br/>
+					<br /><br />
 
 					<button id = "gen-mean">Plot mean</button>
 				</div>
@@ -91,31 +91,40 @@
 		</div>
 
 		<!-- edit chart title -->
-		<div class = "edit-label" name = "title">
-			Title <input type = "text" class = "label-text"><br/>
-			Font <select class = "label-font"><option>Times New Roman</option></select><br/>
-			<input type = "color" class = "label-color"> <span></span>
-			<input type = "number" class = "label-size"> <span></span> <br/>
+		<div class = "edit-label" id = "edit-title">
+			Title <input type = "text" class = "label-text"><br />
+			<!-- options in plot-main.js -->
+			Font <select class = "label-font"></select>
+			<span></span>
+			<input type = "color" class = "label-color">
+			<span></span>
+			<input type = "number" class = "label-size"> <br />
 			<button class = 'apply-label'>Apply</button>
 			<button class = 'cancel'>Cancel</button>
 		</div>
 
 		<!-- edit x-axis label -->
-		<div class = "edit-label" name = "x-label">
-			Title <input type = "text" class = "label-text"><br/>
-			Font <select class = "label-font"><option>Times New Roman</option></select><br/>
-			<input type = "color" class = "label-color"> <span></span>
-			<input type = "number" class = "label-size"> <span></span> <br/>
+		<div class = "edit-label" id = "edit-x-label">
+			Title <input type = "text" class = "label-text"><br />
+			Font <select class = "label-font"></select>
+			<span></span>
+			<input type = "color" class = "label-color">
+			<span></span>
+			<input type = "number" class = "label-size"> <br />
+			Tick interval <input type = "number" class = "tick-interval"> <br />
 			<button class = 'apply-label'>Apply</button>
 			<button class = 'cancel'>Cancel</button>
 		</div>
 
 		<!-- edit y-axis label -->
-		<div class = "edit-label" name = "y-label">
-			Title <input type = "text" class = "label-text"><br/>
-			Font <select class = "label-font"><option>Times New Roman</option></select><br/>
-			<input type = "color" class = "label-color"> <span></span>
-			<input type = "number" class = "label-size"> <span></span> <br/>
+		<div class = "edit-label" id = "edit-y-label">
+			Title <input type = "text" class = "label-text"><br />
+			Font <select class = "label-font"></select>
+			<span></span>
+			<input type = "color" class = "label-color">
+			<span></span>
+			<input type = "number" class = "label-size"> <br />
+			Tick interval <input type = "number" class = "tick-interval"> <br />
 			<button class = 'apply-label'>Apply</button>
 			<button class = 'cancel'>Cancel</button>
 		</div>

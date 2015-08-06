@@ -26,7 +26,7 @@ html, body {
 	background: #ededed;
 }
 
-#chart-settings input[type = "number"] {	width: 30%; }
+#chart-settings input[type = "number"] {	 width: 30%; }
 
 #chart-settings .on-plot:not(#line-scatter) {
 	display: none;
@@ -85,20 +85,27 @@ html, body {
 	font-size: 13px;
 }
 
-.edit-label span {
-	margin-left: 10px;
+#edit-title {
+	width: 250px;
+	height: 80px;
 }
 
-.edit-label input[type="number"] {
-	width: 35px;
-	height: 25px;
-	font-size: 15px;
+#edit-x-label, #edit-y-label {
+	width: 250px;
+	height: 100px;
 }
 
-.edit-label .sp-replacer {
-	width: 30px;
-	height: 20px;
-}
+.edit-label span { margin-left: 5px; }
+
+.edit-label .label-font { width: 120px; }
+.edit-label .label-size { width: 25px; }
+
+.edit-label .sp-preview-inner { width: 15px; height: 15px; }
+.edit-label .sp-preview { width: 15px; height: 15px; }
+.edit-label .sp-replacer { width: 15px; height: 15px; }
+.edit-label .sp-dd { display: none; }
+
+.edit-label .tick-interval { width: 60px; }
 
 button {
 	font-size: 13px;

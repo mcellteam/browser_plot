@@ -36,10 +36,17 @@ $(window).load(function () {
 	initChart();
 	initData();
 	initSeriesList();
-	changeLabelOptions();
+	initLabelOptions();
 	chartDisplayOptions();
 	initResizable();
 	otherPlots();
+});
+
+/*******************************************************
+	window settings
+*******************************************************/
+$(window).resize(function() {
+	triggerSetExtremes();
 });
 
 /*******************************************************
@@ -53,16 +60,24 @@ function getSeriesType(mode) {
 	alert("Invalid mode!");
 }
 
+function triggerSetExtremes() {
+	var xAxis = chart.xAxis[0];
+	var yAxis = chart.yAxis[0];
+	xAxis.setExtremes(xAxis.min, xAxis.max);
+	yAxis.setExtremes(yAxis.min, yAxis.max);
+}
+
 /*********************************************
-	initial chart/settings
+	initial settings
 ********************************************/
 function initChart() {
 	chart = new Highcharts.Chart({
 		chart: {
 			events: {
-				click: function(event) {
+				click: function (e) {
 					$('.edit-label').invisible();
-				}
+				},
+				addSeries: triggerSetExtremes
 			},
 			renderTo: 'chart',
 			zoomType: 'xy'
@@ -74,7 +89,7 @@ function initChart() {
 			text: 'Reaction Data',
 			events: {
 				click: function() {
-					showLabelOptions(this, $('.edit-label[name="title"]'), this.title.x, this.title.y);
+					showLabelOptions(this, $('#edit-title'), this.title.x, this.title.y);
 				}
 			},
 			style: {
@@ -92,10 +107,13 @@ function initChart() {
 					}
 				}
 			},
+			labels: {
+				style: { fontSize: '12px', fontFamily: 'Lucida Grande' }
+			},
 			title: {
 				events: {
 					click: function() {
-						showLabelOptions(this, $('.edit-label[name="x-label"]'), this.chart.chartWidth/2.0, this.chart.chartHeight - 60);
+						showLabelOptions(this, $('#edit-x-label'), this.chart.chartWidth/2.0, this.chart.chartHeight - 60);
 					}
 				},
 
@@ -112,10 +130,13 @@ function initChart() {
 					}
 				}
 			},
+			labels: {
+				style: { fontSize: '12px', fontFamily: 'Lucida Grande' }
+			},
 			title: {
 				events: {
 					click: function() {
-						showLabelOptions(this, $('.edit-label[name="y-label"]'), 20, this.chart.chartHeight/2.0 - 20);
+						showLabelOptions(this, $('#edit-y-label'), 20, this.chart.chartHeight/2.0 - 20);
 					}
 				},
 
@@ -128,7 +149,7 @@ function initChart() {
 				animation: false,
 				cursor: 'pointer',
 				events: {
-					click: function (event) {
+					click: function (e) {
 						// select in sidebar
 						var seriesOption = $('#series-list option[name="' + this.name + '"]');
 						if (seriesOption.prop("selected")) {
@@ -137,7 +158,16 @@ function initChart() {
 							seriesOption.prop("selected", true);
 						}
 						$('#series-list').change();
-                    }
+                    },
+					hide: function(e) {
+						triggerSetExtremes();
+					},
+					remove: function(e) {
+						triggerSetExtremes();
+					},
+					show: function(e) {
+						triggerSetExtremes();
+					}
                 }
             }
         },
@@ -147,6 +177,7 @@ function initChart() {
 		binCount: 10
 	};
 }
+
 /*********************************************
 	various chart display functions follow
 ********************************************/
@@ -167,13 +198,21 @@ function showLabelOptions(labelElem, editElem, offsetX, offsetY) {
 		.val(labelElem.options.title.style.color);
 	editElem.children('.label-size')
 		.val(parseInt(labelElem.options.title.style.fontSize));
+	editElem.children('.label-font')
+		.val(labelElem.options.title.style.fontFamily);
+
+	/* axis only */
+	if ((editElem.children('.tick-interval')).length) {
+		editElem.children('.tick-interval')
+			.val(labelElem.tickInterval);
+	}
 }
 
 function getLabelElem(eName) {
 	switch (eName) {
-		case "title": return chart;
-		case "x-label": return chart.xAxis[0];
-		case "y-label": return chart.yAxis[0]; 
+		case "edit-title": return chart;
+		case "edit-x-label": return chart.xAxis[0];
+		case "edit-y-label": return chart.yAxis[0]; 
 		default: alert("error");
 	}
 }
@@ -182,7 +221,40 @@ function getLabelElem(eName) {
  * edit options displayed on label mouseover and
  * hidden on cancel/chart/apply click
  */
-function changeLabelOptions() {
+function initFonts() {
+	var fontList = ['Times New Roman', 'Arial', 'Helvetica', 'Arial Black', 'Comic Sans MS', 'Lucida Grande', 'Tahoma', 'Geneva', 'Verdana', 'Courier New'];
+
+	for (var i = 0; i < fontList.length; i++) {
+		$('.edit-label .label-font').append($('<option>')
+			.append(fontList[i])
+			.attr("name", fontList[i]));
+	}
+}
+
+function applyLabel() {
+	var parent = $(this).parent();
+	var labelElem = getLabelElem(parent.attr("id"));
+	
+	var newStyle = {
+		color: parent.children('.label-color').val(),
+		fontSize: parent.children('.label-size').val() + 'px',
+		fontFamily: parent.children('.label-font').val()
+	};
+
+	labelElem.setTitle({
+		text: parent.children('.label-text').val(),
+		style: newStyle
+	});
+
+	labelElem.update({
+		labels: { style: newStyle },
+		tickInterval: parseFloat(parent.children('.tick-interval').val())
+	});
+
+	$('.edit-label').invisible();
+}
+
+function initLabelOptions() {
 	$('.cancel').click(function() {
 		$('.edit-label').invisible();
 	});
@@ -192,19 +264,9 @@ function changeLabelOptions() {
 		preferredFormat: 'hex'
 	});
 
-	$('.apply-label').click(function() {
-		var parent = $(this).parent();
-		var labelElem = getLabelElem(parent.attr("name"));
-		labelElem.setTitle({
-			text: parent.children('.label-text').val(),
-			style: {
-				color: parent.children('.label-color').val(),
-				fontSize: parent.children('.label-size').val() + 'px'
-			}
-		});
+	initFonts();
 
-		$('.edit-label').invisible();
-	});
+	$('.apply-label').click(applyLabel);
 }
 
 /* user options for changing plot range/display */
@@ -458,6 +520,11 @@ function addSeriesFromFile(file) {
 			type: getSeriesType(getMode())
 		};
 		chart.addSeries(newSeries);
+
+		$('#series-list').append($('<option selected>')
+			.append(defaultSeriesName)
+			.attr("name", defaultSeriesName));
+		$('#series-list').change();
 	}
 	reader.readAsText(file);
 }
@@ -480,6 +547,8 @@ function seriesListOps() {
 	});
 
 	$('#add-series').change(function() {
+		$('#series-list option').removeProp("selected");
+
 		var fileList = ($('#add-series'))[0].files;
 		for (var i = 0; i < fileList.length; i++) {
 			addSeriesFromFile(fileList[i]);
