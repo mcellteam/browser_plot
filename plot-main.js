@@ -21,16 +21,6 @@
 }(jQuery));
 
 var chart;
-/* master version of series info
- * key: series name
- * val: data
- * to be updated in sync with current chart
- */
-var masterSeriesData;
-
-/* histogram settings updated while in hist. mode
- */
-var histOptions;
 
 $(window).load(function () {
 	initChart();
@@ -52,14 +42,6 @@ $(window).resize(function() {
 /*******************************************************
 	shortcuts for accessing properties of chart state
 *******************************************************/
-function getMode() { return $('input[type="radio"][name="chart-type"]:checked').val(); }
-
-function getSeriesType(mode) {
-	if (mode === "line" || mode === "scatter") return mode;
-	else if (mode === "hist") return "column";
-	alert("Invalid mode!");
-}
-
 function triggerSetExtremes() {
 	var xAxis = chart.xAxis[0];
 	var yAxis = chart.yAxis[0];
@@ -80,6 +62,7 @@ function initChart() {
 				addSeries: triggerSetExtremes
 			},
 			renderTo: 'chart',
+			type: 'line',			
 			zoomType: 'xy'
 		},
 		credits: { enabled: false },
@@ -101,10 +84,8 @@ function initChart() {
 		xAxis: {
 			events: {
 				afterSetExtremes: function(e) {
-					if (getMode() === "line" || getMode() === "scatter") {
-						$('#x-min').val(this.min);
-						$('#x-max').val(this.max);
-					}
+					$('#x-min').val(this.min);
+					$('#x-max').val(this.max);
 				}
 			},
 			labels: {
@@ -124,10 +105,8 @@ function initChart() {
 		yAxis: {
 			events: {
 				afterSetExtremes: function(e) {
-					if (getMode() === "line" || getMode() === "scatter") {
-						$('#y-min').val(this.min);
-						$('#y-max').val(this.max);
-					}
+					$('#y-min').val(this.min);
+					$('#y-max').val(this.max);
 				}
 			},
 			labels: {
@@ -172,10 +151,6 @@ function initChart() {
             }
         },
 	});
-
-	histOptions = {
-		binCount: 10
-	};
 }
 
 /*********************************************
@@ -246,10 +221,12 @@ function applyLabel() {
 		style: newStyle
 	});
 
-	labelElem.update({
-		labels: { style: newStyle },
-		tickInterval: parseFloat(parent.children('.tick-interval').val())
-	});
+	if (parent.attr("id") !== "edit-title") {
+		labelElem.update({
+			labels: { style: newStyle },
+			tickInterval: parseFloat(parent.children('.tick-interval').val())
+		});
+	}
 
 	$('.edit-label').invisible();
 }
@@ -302,22 +279,20 @@ function chartDisplayOptions() {
 		$('#chart').css("background", $('#chart-color').val());
 	});
 
-	/* histogram settings */
-	$('#bin-count').change(function() {
-		var binCount = $('#bin-count').val();
-		histOptions.binCount = parseInt(binCount);
-		updateHistOptions();
-		updateCategories();
-		updateSeriesMode("hist");
-	});
-
 	$('#toggle-legend').click(function() {
 		var e = $('#toggle-legend');
-		if (e.prop("checked")) {
+		if (e.prop("checked"))
 			$('.highcharts-legend').visible();
-		} else {
+		else
 			$('.highcharts-legend').invisible();
-		}
+	});
+
+	$('#toggle-ls').click(function() {
+		var e = $('#toggle-ls');
+		if (e.prop("checked"))
+			updateAllSeries({ type: 'line' });
+		else
+			updateAllSeries({ type: 'scatter' });
 	});
 }
 
@@ -330,11 +305,10 @@ function initResizable() {
 			$('#chart-container').css({ 'width': widthPct + '%' });
 
 			chart.setSize($('#chart').width() - 20,
-						$('#chart').height() - 20, false);
+				$('#chart').height() - 20, false);
 		}
 	});
 	$('#chart-settings').resizable({ handles: 's' });
-	$('#tab-view').resizable({ handles: 's' });
 
 	$('#chart').resizable({
 		handles: 'se',
@@ -385,13 +359,10 @@ function addSeriesFromPath(seriesName, path) {
 		success: function(content) {
 			var seriesData = parseContent(content);
 			chart.addSeries({
-				data: dataAsType(seriesData, getMode()),
+				data: seriesData,
 				id: seriesName,
 				name: seriesName
 			});
-
-			// todo: check for duplicate series
-			masterSeriesData[seriesName] = seriesData;
 		},
 		error: function() {
 			alert(path + " not found");
@@ -439,6 +410,12 @@ function initData() {
 	functions for series operations follow
 *********************************************/
 
+/* updates all series with the given options */
+function updateAllSeries(options) {
+	for (var i = 0; i < chart.series.length; i++)
+		chart.series[i].update(options);
+}
+
 /* renames series to newName and replaces relevant options in selection list */
 function renameSeries(series, newName) {
 	var prevName = series.name;
@@ -447,33 +424,12 @@ function renameSeries(series, newName) {
 		name: newName
 	});
 
-	masterSeriesData[newName] = masterSeriesData[prevName];
-	delete masterSeriesData[prevName];
-
 	$('#series-name').val(newName);
 	$('#series-list option[name="' + prevName + '"]')
 		.attr("name", newName)
 		.text(newName);
 }
 
-/* initiate empty series in chart and selection list */
-function addEmptySeries() {
-	var defaultSeriesName = "Series " + chart.series.length;
-	var newSeries = {
-		id: defaultSeriesName,
-		name: defaultSeriesName,
-		type: getSeriesType(getMode())
-	};
-	chart.addSeries(newSeries);
-	masterSeriesData[defaultSeriesName] = newSeries.data;
-
-	// todo: check for duplicate series
-		
-	$('#series-list option').removeProp("selected");
-	$('#series-list').append($('<option selected>')
-		.append(defaultSeriesName)
-		.attr("name", defaultSeriesName));
-}
 
 /* update series data on file change */
 function changeSeriesFromFile() {
@@ -495,10 +451,7 @@ function changeSeriesFromFile() {
 	f.onload = function(e) {
 		var content = e.target.result;
 		var seriesData = parseContent(content);
-		masterSeriesData[selectedOption[0]] = seriesData;
-		curSeries.update({
-			data: dataAsType(seriesData, $('input[type="radio"][name="chart-type"]:checked').val())
-		});
+		curSeries.update({ data: seriesData });
 		renameSeries(curSeries, files[0].name);
 	}
 	f.readAsText(files[0]);
@@ -512,12 +465,10 @@ function addSeriesFromFile(file) {
 		var defaultSeriesName = file.name;
 
 		/* todo: check for duplicates */
-		masterSeriesData[defaultSeriesName] = seriesData;
 		var newSeries = {
 			id: defaultSeriesName,
 			name: defaultSeriesName,
-			data: seriesData,
-			type: getSeriesType(getMode())
+			data: seriesData
 		};
 		chart.addSeries(newSeries);
 
@@ -562,7 +513,6 @@ function seriesListOps() {
 
 		$.each(selectedOptions, function(_, seriesName) {
 			chart.get(seriesName).remove();
-			delete masterSeriesData[seriesName];
 		});
 
 		$('#set-series').invisible();
@@ -658,10 +608,6 @@ function editSeriesOptions() {
 			});
 		});
 	});
-
-	$('#gen-mean').click(function() {
-		plotMean();
-	});
 }
 
 function initSeriesList() {
@@ -694,10 +640,9 @@ function plotMean() {
 		id: defaultSeriesName,
 		name: defaultSeriesName,
 		data: newSeriesData,
-		type: getSeriesType(getMode())
+		type: 'line'
 	};
 	chart.addSeries(newSeries);
-	masterSeriesData[defaultSeriesName] = newSeriesData;
 
 	$('#series-list option').removeAttr("selected");
 	$('#series-list').append($('<option selected>')
@@ -709,128 +654,22 @@ function plotMean() {
 /********************
 	switching modes
 ********************/
+function getSelectedSeries() {
+	var seriesList = new Array();
+	var selectedOptions = $('#series-list').val();
+	$.each(selectedOptions, function(_, seriesName) {
+		seriesList.push(chart.get(seriesName));
+	});
+	return seriesList;
+}
 
 function otherPlots() {
-	$('input[type="radio"][name="chart-type"]').change(function() {
-		var mode = getMode();
-
-		if (mode === "line") {
-			plotLS("line");
-		} else if (mode == "scatter") {
-			plotLS("scatter");
-		} else if (mode === "hist") {
-			chart.zoom();
-			plotHist();
-		} else {
-			alert("Unsupported chart type");
-		}
+	$('#gen-mean').click(function() {
+		plotMean();
 	});
-}
 
-function getDataExtremes() {
-	var extremes = new Array(null, null);
-	$.each(chart.series, function(_, series) {
-		$.each(masterSeriesData[series.name], function(_, pt) {
-			if (extremes[0] === null) {
-				extremes[0] = pt[1];
-				extremes[1] = pt[1];
-			} else {
-				extremes[0] = Math.min(extremes[0], pt[1]);
-				extremes[1] = Math.max(extremes[1], pt[1]);
-			}
-		});
+	$('#gen-hist').click(function() {
+		var w = window.open('histogram.html', '_blank', 'width=1000, height=600');
+		w.origSeries = getSelectedSeries();
 	});
-	return extremes;
-}
-
-function updateSeriesMode(mode) {
-	if (mode === "hist") {
-		$.each(chart.series, function(_, series) {
-			var seriesData = masterSeriesData[series.name];
-			series.update({
-				data: dataAsType(seriesData, "hist"),
-				type: 'column'
-			});
-		});
-	}
-}
-
-function dataAsType(data, mode) {
-	if (mode === "line" || mode === "scatter") return data;
-	else if (mode === "hist") {
-		var binCount = histOptions.binCount;
-		var seriesData = new Array();
-		for (var i = 0; i < binCount; i++) seriesData.push(0);
-
-		var binSize = histOptions.binSize;
-		var extremes = getDataExtremes();
-
-		$.each(data, function(_, pt) {
-			var binIndex = Math.floor((pt[1] - extremes[0])/binSize);
-			seriesData[binIndex]++;
-		});
-
-		return seriesData;
-	} else {
-		alert("Datatype not supported");
-	}
-}
-
-function plotLS(mode) {
-	$('#chart-settings #line-scatter').visible();
-	$('#chart-settings .on-plot').not($('#line-scatter')).invisible();
-	chart.xAxis[0].setCategories(null);
-	$.each(chart.series, function(_, series) {
-		series.update({
-			data: masterSeriesData[series.name],
-			type: mode
-		});
-	});
-	
-	chart.zoom();
-}
-
-function updateInMode(mode) {
-	if (mode === "hist") {
-		updateCategories();
-	}
-}
-
-/*************************
-	histogram mode
-*************************/
-function updateHistOptions() {
-	//var yAxis = chart.yAxis[0];
-	var binCount = histOptions.binCount;
-	var extremes = getDataExtremes();
-	var binSize = Math.floor((extremes[1] - extremes[0])/binCount) + 1;
-
-	$('#bin-count').val(binCount);
-	histOptions.binSize = binSize;
-}
-
-function updateCategories() {
-	var categories = new Array();
-	var binCount = histOptions.binCount;
-	var binSize = histOptions.binSize;
-
-	var extremes = getDataExtremes();	
-
-	for (var i = 0; i < binCount; i++) {
-		var xMin = extremes[0] + i * binSize;
-		categories.push(xMin + " - " + (xMin + binSize - 1));
-	}
-	
-	chart.xAxis[0].setCategories(categories);
-}
-
-function plotHist() {
-	$('#chart-settings #hist').visible();
-	$('#chart-settings .on-plot').not($('#hist')).invisible();
-
-	updateHistOptions();	
-	updateCategories();
-	updateSeriesMode("hist");
-
-	chart.zoom();
 }

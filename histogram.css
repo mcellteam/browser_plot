@@ -5,13 +5,6 @@ html, body {
 	padding: 0;
 }
 
-/*** testing ****/
-#div-2 {
-	border: 1px solid red;
-	float: left;
-	height: 100%;
-}
-
 /* left panel */
 #settings-panel {
 	float: left;

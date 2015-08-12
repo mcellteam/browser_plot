@@ -3,9 +3,14 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Main plot</title>
-		<script src="external/all-min.js"></script>
+		<script src="external/jquery.min.js"></script> <!-- 1.10.2 -->
+		<script src="external/highcharts.js"></script>
+		<script src="http://code.highcharts.com/modules/exporting.js"></script>
+		<script src='external/spectrum.js'></script>
 		<link rel='stylesheet' href='external/spectrum.css' />
+		<script src='external/customEvents.js'></script>
 		<link rel="stylesheet" href="external/jquery-ui-1.11.4.custom/jquery-ui.min.css" />
+		<script src="external/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 		<link rel="stylesheet", type="text/css", a href = "plot-main.css" />
 	</head>
 
@@ -14,34 +19,22 @@
 		<div id = "settings-panel">
 			<!-- plot range and chart display options -->
 			<div id = "chart-settings">
-				<div id = "line-scatter" class = "on-plot">
-					<b>Plot range</b><br />
-					<b>x</b> from
-					<input type = "number" id = "x-min" class = "plot-range">
-					to <input type = "number" id = "x-max" class = "plot-range">
-					<br />
-					<b>y</b> from <input type = "number" id = "y-min" class = "plot-range">
-					to <input type = "number" id = "y-max" class = "plot-range">
-				</div>
-
-
-				<div id = "hist" class = "on-plot">
-					<b>Bin count</b> <input type = "number" id = "bin-count"> <br />
-				</div>
-
+				<b>Plot range</b><br />
+				<b>x</b> from
+				<input type = "number" id = "x-min" class = "plot-range">
+				to <input type = "number" id = "x-max" class = "plot-range">
+				<br />
+				<b>y</b> from <input type = "number" id = "y-min" class = "plot-range">
+				to <input type = "number" id = "y-max" class = "plot-range"><br />
 
 				<b>Chart background</b>
 				<input type = "color" id = "chart-color">
 				<br />
 
 				<b>Show legend</b>
-				<input type = "checkbox" id = "toggle-legend" checked>
-				<br /><br />
-
-				<b>Plot type</b><br/>
-				<input type = "radio" name = "chart-type" value = "line" checked><span/>line
-				<input type = "radio" name = "chart-type" value = "scatter"><span/>scatter
-				<input type = "radio" name = "chart-type" value = "hist"><span/>histogram<br />
+				<input type = "checkbox" id = "toggle-legend" checked><br />
+				<b>Show line</b>
+				<input type = "checkbox" id = "toggle-ls" checked><br />
 			</div>
 
 			<!-- series display options -->
@@ -81,8 +74,13 @@
 					<br /><br />
 
 					<button id = "gen-mean">Plot mean</button>
+					<button id = "gen-hist">Histogram</button>
 				</div>
 			</div>
+		</div>
+
+		<div id = "div-2">
+		
 		</div>
 
 		<!-- chart area -->
