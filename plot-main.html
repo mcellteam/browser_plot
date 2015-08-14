@@ -3,14 +3,9 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Main plot</title>
-		<script src="external/jquery.min.js"></script> <!-- 1.10.2 -->
-		<script src="external/highcharts.js"></script>
-		<script src="http://code.highcharts.com/modules/exporting.js"></script>
-		<script src='external/spectrum.js'></script>
+		<script src="external/all-min.js"></script>
 		<link rel='stylesheet' href='external/spectrum.css' />
-		<script src='external/customEvents.js'></script>
 		<link rel="stylesheet" href="external/jquery-ui-1.11.4.custom/jquery-ui.min.css" />
-		<script src="external/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 		<link rel="stylesheet", type="text/css", a href = "plot-main.css" />
 	</head>
 
@@ -29,12 +24,15 @@
 
 				<b>Chart background</b>
 				<input type = "color" id = "chart-color">
-				<br />
+				<br /><br />
 
-				<b>Show legend</b>
-				<input type = "checkbox" id = "toggle-legend" checked><br />
-				<b>Show line</b>
-				<input type = "checkbox" id = "toggle-ls" checked><br />
+				<b>Legend</b>
+				<input type = "checkbox" id = "toggle-legend" checked>
+				<b>Line</b>
+				<input type = "checkbox" id = "toggle-ls" checked>
+				<b>Point marker</b>
+				<input type = "checkbox" id = "toggle-mark" checked>
+				<br />
 			</div>
 
 			<!-- series display options -->

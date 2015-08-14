@@ -208,7 +208,6 @@
 			var e = $('#toggle-mark');
 			if (e.prop("checked")) plotFlags.marker = null;
 			else plotFlags.marker = false;
-
 			updateAllSeries({ marker: { enabled: plotFlags.marker }});
 		});
 	}
