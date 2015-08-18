@@ -30,9 +30,10 @@ var chart,
 (function() {
 	$(window).load(function () {
 		initChart();
-		initLabelOptions();
 		chartDisplayOptions();
+		initLabelOptions(chart);
 		initResizable(chart);
+		initExpandable();
 	});
 
 	function initChart() {
@@ -67,7 +68,7 @@ var chart,
 
 			xAxis: {
 				labels: {
-					style: { fontSize: '12px', fontFamily: 'Lucida Gran	de' }
+					style: { fontSize: '12px', fontFamily: 'Lucida Grande' }
 				},
 				title: {
 					events: {
@@ -76,7 +77,7 @@ var chart,
 						}
 					},
 
-					style: { fontSize: '12px', fontFamily: 'Lucida Grande' }
+					style: { fontSize: '12px', fontFamily: 'Lucida Grande' },
 				}
 			},
 			
@@ -185,6 +186,20 @@ var chart,
 			updateHistOptions();
 			updateCategories();
 			updateSeries();
+		});
+	}
+
+	function initExpandable() {
+		$('#outer-expand').click(function() {
+			if ($(this).children('span').html() == '\u21fd') {
+				$(this).children('span').html('&#x21fe');
+			} else {
+				$(this).children('span').html('&#x21fd');
+			}
+
+			$('#settings-panel').toggle('slide', 50, function() {
+				updateChartDimensions(chart);
+			});
 		});
 	}
 })();

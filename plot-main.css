@@ -5,15 +5,8 @@ html, body {
 	padding: 0;
 }
 
-/*** testing ****/
-#div-2 {
-	border: 1px solid red;
-	float: left;
-	height: 100%;
-}
-
 /* left panel */
-#settings-panel {
+.side-panel {
 	float: left;
 	width: 20%;
 	height: 100%;
@@ -22,6 +15,9 @@ html, body {
 	background: #ededed;
 	border-right: 1px solid gray;
 }
+
+.expand { float: left; border-right: 1px solid black; height: 100%; background: #ededed; }
+.expand * { position: relative; top: 50%; }
 
 /* top-left */
 #chart-settings {
@@ -120,7 +116,7 @@ button {
 	float: left;
 	display: inline block;
 	margin-right: 0;
-	width: 79%;
+	width: 77%;
 	height: 100%;
 }
 

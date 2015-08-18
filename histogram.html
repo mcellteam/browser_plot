@@ -4,14 +4,13 @@
 		<meta charset="utf-8">
 		<title>Histogram</title>
 		<script src="external/all-min.js"></script>
-		<link rel='stylesheet' href='external/spectrum.css' />
-		<link rel="stylesheet" href="external/jquery-ui-1.11.4.custom/jquery-ui.min.css" />
+		<link rel='stylesheet' href='external/all-min.css'></script>
 		<link rel="stylesheet", type="text/css", a href = "histogram.css" />
 	</head>
 
 	<body>
 		<!-- left panel -->
-		<div id = "settings-panel">
+		<div id = "settings-panel" class = "side-panel">
 			<!-- plot range and chart display options -->
 			<div id = "chart-settings">
 				<b>Bin count</b> <input type = "number" id = "bin-count"> <br />
@@ -23,6 +22,9 @@
 				<b>Show legend</b>
 				<input type = "checkbox" id = "toggle-legend" checked><br />
 			</div>
+		</div>
+		<div id = "outer-expand" class = "expand">
+			<span>&#x21fd;</span>
 		</div>
 
 		<div id = "chart-container">
@@ -69,6 +71,7 @@
 		</div>
 
 		<!-- main script -->
+		<script src = "common-display.js"></script>
 		<script src = "histogram.js"></script>
 	</body>
 </html>

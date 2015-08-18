@@ -32,9 +32,10 @@
 		initChart();
 		initData();
 		initSeriesList();
-		initLabelOptions();
 		chartDisplayOptions();
+		initLabelOptions(chart);
 		initResizable(chart);
+		initExpandable();
 		otherPlots();
 	});
 	
@@ -212,7 +213,21 @@
 			updateAllSeries({ marker: { enabled: plotFlags.marker }});
 		});
 	}
-	
+
+	function initExpandable() {
+		$('#outer-expand').click(function() {
+			if ($(this).children('span').html() == '\u21fd') {
+				$(this).children('span').html('&#x21fe');
+			} else {
+				$(this).children('span').html('&#x21fd');
+			}
+
+			$('#settings-panel').toggle('slide', 50, function() {
+				updateChartDimensions(chart);
+			});
+		});
+	}
+
 	/***********************************************
 		functions for initializing series follow
 	***********************************************/

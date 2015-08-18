@@ -2,29 +2,43 @@
  * contains functions used by both plot-main.js and histogram.js
  * @author Beilin Li
  */
+
+function updateChartDimensions(chart) {
+	var rightElem = $('#outer-expand');
+	var rightPos = rightElem.offset().left + rightElem.outerWidth();
+	var widthPct = 99.0 - 100.0 * rightPos/$(window).width();
+	$('#chart-container').css({ 'width': widthPct + '%' });
+	
+	chart.setSize($('#chart').width(), $('#chart').height(), false);
+}
+
 function initResizable(chart) {
 	$('#settings-panel').resizable({
 		handles: 'e',
 		resize: function(event, ui) {
-			var widthPct = 99.0 - 100.0 * ui.size.width/$(window).width();
-			$('#chart-container').css({ 'width': widthPct + '%' });
-
-			chart.setSize($('#chart').width() - 20,
-				$('#chart').height() - 20, false);
+			updateChartDimensions(chart);
 		}
 	});
 	$('#chart-settings').resizable({ handles: 's' });
 
 	$('#chart').resizable({
 		handles: 'se',
-		resize: function() {
-			var width = this.offsetWidth - 20;
-			var height = this.offsetHeight - 20;
+		resize: function(event, ui) {
+			chart.setSize($(this).width(), $(this).height(), false);
 
-			chart.setSize(width, height, false);
-
-			var marginWidth = 50 - (50.0 * width / $('#chart-container').width());
+			var marginWidth = 50 - (50.0 * $(this).width() / $('#chart-container').width());
 			$(this).css({ 'margin-left': marginWidth + '%' });
+		},
+
+		/**
+		 * keeping CSS property percentage based
+		 * to preserve proportionality to the page
+		 */
+		stop: function(event, ui) {
+			var widthPct = 100.0 * $(this).width()/$('#chart-container').width();
+			var heightPct = 100.0 * $(this).height()/$('#chart-container').height();
+			$(this).css({ 'width': widthPct + '%',
+						'height': heightPct + '%' });
 		}
 	});
 }
@@ -52,7 +66,7 @@ function showLabelOptions(labelElem, editElem, offsetX, offsetY) {
 	}
 }
 
-function getLabelElem(eName) {
+function getLabelElem(chart, eName) {
 	switch (eName) {
 		case "edit-title": return chart;
 		case "edit-x-label": return chart.xAxis[0];
@@ -75,9 +89,8 @@ function initFonts() {
 	}
 }
 
-function applyLabel() {
-	var parent = $(this).parent();
-	var labelElem = getLabelElem(parent.attr("id"));
+function applyLabel(chart, parent) {
+	var labelElem = getLabelElem(chart, parent.attr("id"));
 	
 	var newStyle = {
 		color: parent.children('.label-color').val(),
@@ -100,7 +113,7 @@ function applyLabel() {
 	$('.edit-label').invisible();
 }
 
-function initLabelOptions() {
+function initLabelOptions(chart) {
 	$('.cancel').click(function() {
 		$('.edit-label').invisible();
 	});
@@ -112,5 +125,8 @@ function initLabelOptions() {
 
 	initFonts();
 
-	$('.apply-label').click(applyLabel);
+	$('.apply-label').click(function() {
+		console.log($(this).parent());
+		applyLabel(chart, $(this).parent());
+	});
 }
