@@ -140,6 +140,8 @@
 								seriesOption.prop("selected", true);
 							}
 							$('#series-list').change();
+
+							changeSpreadsheetSeries(this.name);
 	                    },
 						hide: function(e) {
 							triggerSetExtremes();
@@ -205,24 +207,35 @@
 			updateAllSeries({ type: plotFlags.type });
 		});
 	
-		$('#toggle-mark').click(function() {
-			var e = $('#toggle-mark');
-			if (e.prop("checked")) plotFlags.marker = null;
-			else plotFlags.marker = false;
+		$('#mark-type').click(function() {
+			var markType = $(this).val();
+			if (markType === "true") plotFlags.marker = true;
+			else if (markType === "false") plotFlags.marker = false;
+			else plotFlags.marker = null;
 
 			updateAllSeries({ marker: { enabled: plotFlags.marker }});
 		});
 	}
 
 	function initExpandable() {
-		$('#outer-expand').click(function() {
-			if ($(this).children('span').html() == '\u21fd') {
-				$(this).children('span').html('&#x21fe');
+		function toggleArrow(elem) {
+			if (elem.html() == '\u21fd') {
+				elem.html('&#x21fe');
 			} else {
-				$(this).children('span').html('&#x21fd');
+				elem.html('&#x21fd');
 			}
+		}
 
+		$('#inner-expand').click(function() {
+			toggleArrow($(this).children('span'));
 			$('#settings-panel').toggle('slide', 50, function() {
+				updateChartDimensions(chart);
+			});
+		});
+
+		$('#outer-expand').click(function() {
+			toggleArrow($(this).children('span'));
+			$('#spreadsheet-panel').toggle('slide', 50, function() {	
 				updateChartDimensions(chart);
 			});
 		});
@@ -586,6 +599,28 @@
 		$('#gen-hist').click(function() {
 			var w = window.open('histogram.html', '_blank', 'width=1000, height=600');
 			w.origSeries = getSelectedSeries();
+		});
+	}
+
+	/*********************
+	 * series data table *
+	 ********************/
+	function changeSpreadsheetSeries(seriesName) {
+		$('#sheet-title').text(seriesName);
+		console.log(chart.xAxis[0]);
+
+		if ($('#sheet-x-label').length === 0) {
+			$('#sheet-header').append($('<tr>')
+				.append($('<th>').append(chart.options.xAxis[0].title.text).attr("id", "sheet-x-label"))
+				.append($('<th>').append(chart.options.yAxis[0].title.text).attr("id", "sheet-y-label")));
+		}
+
+		var series = chart.get(seriesName);
+		$('#sheet-data *').empty();
+		$.each(series.data, function(_, pt) {
+			$('#sheet-data').append($('<tr>')
+				.append($('<td>').append(pt.x))
+				.append($('<td>').append(pt.y)));
 		});
 	}
 })();

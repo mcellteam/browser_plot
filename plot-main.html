@@ -25,12 +25,17 @@
 				<input type = "color" id = "chart-color">
 				<br /><br />
 
-				<b>Legend</b>
+				<b>Show legend</b>
 				<input type = "checkbox" id = "toggle-legend" checked>
-				<b>Line</b>
-				<input type = "checkbox" id = "toggle-ls" checked>
+				<text>&nbsp;</text>
+				<b>Show lines</b>
+				<input type = "checkbox" id = "toggle-ls" checked><br />
 				<b>Point marker</b>
-				<input type = "checkbox" id = "toggle-mark" checked>
+				<select id = "mark-type" checked>
+					<option value = "true">All points</option>
+					<option value = "null" selected>Sparse</option>
+					<option value = "false">None</option>
+				</select>
 				<br />
 			</div>
 
@@ -75,8 +80,22 @@
 				</div>
 			</div>
 		</div>
-		<div id = "outer-expand" class = "expand">
+		<div id = "inner-expand" class = "expand">
 			<span>&#x21fd;</span>
+		</div>
+
+		<div id = "spreadsheet-panel" class = "side-panel">
+			<table id = "series-spreadsheet">
+				<thead id = "sheet-header">
+					<tr>
+						<th colspan = "2" id = "sheet-title">No series selected</th></tr>
+				</thead>
+				<tbody id = "sheet-data">
+				</tbody>
+			</table>
+		</div>
+		<div id = "outer-expand" class = "expand">
+			<span>&#x21fe;</span>
 		</div>
 
 		<!-- chart area -->

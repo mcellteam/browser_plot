@@ -13,7 +13,7 @@ function updateChartDimensions(chart) {
 }
 
 function initResizable(chart) {
-	$('#settings-panel').resizable({
+	$('.side-panel').resizable({
 		handles: 'e',
 		resize: function(event, ui) {
 			updateChartDimensions(chart);

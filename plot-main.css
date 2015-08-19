@@ -8,7 +8,6 @@ html, body {
 /* left panel */
 .side-panel {
 	float: left;
-	width: 20%;
 	height: 100%;
 	font-size: 13px;
 	overflow: hidden;
@@ -16,8 +15,37 @@ html, body {
 	border-right: 1px solid gray;
 }
 
+#settings-panel { width: 20%; }
+
 .expand { float: left; border-right: 1px solid black; height: 100%; background: #ededed; }
 .expand * { position: relative; top: 50%; }
+
+/* series spreadsheet view */
+#spreadsheet-panel {
+	display: none;
+	text-align: center;
+	width: 15%;
+	overflow-y: scroll;
+}
+
+#series-spreadsheet {
+	margin: auto;
+	margin-top: 15%;
+	margin-bottom: 10%;
+	width: 80%;
+	border-collapse: collapse;
+	background-color: white;
+	border: 1px solid black;
+}
+
+#sheet-title {
+	font-size: 18px;
+	padding: 5px;
+}
+
+#series-spreadsheet td, th {
+	border: 1px solid black;
+}
 
 /* top-left */
 #chart-settings {
