@@ -36,6 +36,7 @@
 		initLabelOptions(chart);
 		initResizable(chart);
 		initExpandable();
+		initSpreadsheet();
 		otherPlots();
 	});
 	
@@ -97,7 +98,6 @@
 					events: {
 						click: function() {
 							showLabelOptions(this, $('#edit-x-label'), this.chart.chartWidth/2.0, this.chart.chartHeight - 60);
-							console.log(this);
 						}
 					},
 	
@@ -374,6 +374,7 @@
 			var seriesData = parseContent(content);
 			curSeries.update({ data: seriesData });
 			renameSeries(curSeries, files[0].name);
+			changeSpreadsheetSeries(files[0].name);
 		}
 		f.readAsText(files[0]);
 	}
@@ -438,6 +439,13 @@
 	
 			$.each(selectedOptions, function(_, seriesName) {
 				chart.get(seriesName).remove();
+
+				// reflect in spreadsheet if necessary
+				if ($('#sheet-title').text() === seriesName) {
+					$('#sheet-title').text("No series selected");
+					$('#sheet-data tr').empty();
+					console.log($('#sheet-data'));
+				}
 			});
 	
 			$('#set-series').invisible();
@@ -607,7 +615,6 @@
 	 ********************/
 	function changeSpreadsheetSeries(seriesName) {
 		$('#sheet-title').text(seriesName);
-		console.log(chart.xAxis[0]);
 
 		if ($('#sheet-x-label').length === 0) {
 			$('#sheet-header').append($('<tr>')
@@ -623,4 +630,32 @@
 				.append($('<td>').append(pt.y)));
 		});
 	}
+
+	function initSpreadsheet() {
+		$('#sheet-series-x').change(function() {
+			var x = parseFloat($('#sheet-series-x').val());
+			var found = false;
+
+			if ($('#sheet-data td').length > 0) {
+				var series = chart.get($('#sheet-title').text());
+				for (var i = 0; i < series.data.length; i++) {
+					if (x === series.data[i].x) {
+						var row = $('#sheet-data tr')[i];
+						$('#spreadsheet-panel').animate({
+							scrollTop: $(row).offset().top
+						}, 100);
+						found = true;
+						break;
+					}
+				}
+			}
+
+			if (found) {
+				$('.sheet-search-error').css('visibility', 'hidden');
+			} else {
+				$('.sheet-search-error').css('visibility', 'visible');
+			}
+		});
+	}
+
 })();
