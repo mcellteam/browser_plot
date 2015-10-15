@@ -297,7 +297,6 @@
 	
 	/* read files, add initial series */
 	function initData() {
-		masterSeriesData = { };
 		var plotList;
 	
 		$.ajax({
@@ -314,7 +313,7 @@
 				for (var i = 0; i < plotList.length; i++) {
 					var fname = plotList[i].fname;
 					var title = plotList[i].title;
-	
+
 					$('#series-list').append($('<option>')
 						.append(title)
 						.attr("name", title));
@@ -349,6 +348,11 @@
 		$('#series-list option[name="' + prevName + '"]')
 			.attr("name", newName)
 			.text(newName);
+
+		// reflect in spreadsheet
+		if ($('#sheet-title').text() === prevName) {
+			$('#sheet-title').text(newName);
+		}
 	}
 	
 	
@@ -386,7 +390,7 @@
 			var seriesData = parseContent(content);
 			var defaultSeriesName = file.name;
 	
-			/* todo: check for duplicates */
+			/* todo: check for duplicates and invalid data */
 			var newSeries = {
 				id: defaultSeriesName,
 				name: defaultSeriesName,
@@ -623,7 +627,7 @@
 		}
 
 		var series = chart.get(seriesName);
-		$('#sheet-data *').empty();
+		$('#sheet-data').empty();
 		$.each(series.data, function(_, pt) {
 			$('#sheet-data').append($('<tr>')
 				.append($('<td>').append(pt.x))
