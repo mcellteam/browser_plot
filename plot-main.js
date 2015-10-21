@@ -152,7 +152,15 @@
 						show: function(e) {
 							triggerSetExtremes();
 						}
-	                }
+	                },
+					point: {
+						events: {
+							click: function() {
+								$('#sheet-series-x').val(this.x);
+								$('#sheet-series-x').change();
+							}
+						}
+					}
 	            }
 	        },
 		});
@@ -645,6 +653,7 @@
 				for (var i = 0; i < series.data.length; i++) {
 					if (x === series.data[i].x) {
 						var row = $('#sheet-data tr')[i];
+						$('#spreadsheet-panel').scrollTop(0);
 						$('#spreadsheet-panel').animate({
 							scrollTop: $(row).offset().top
 						}, 100);
