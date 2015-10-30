@@ -2,6 +2,8 @@ import os
 import sys
 import subprocess
 import shutil
+import atexit
+import signal
 
 def find_in_path(program_name):
 	for path in os.environ.get('PATH', '').split(os.pathsep):
@@ -34,4 +36,8 @@ def plot(data_path, plot_spec):
 			plot_cmd.append(spec)
 
 		print ("Plotting with: \"" + ' '.join(plot_cmd) + "\"")
-		pid = subprocess.Popen(plot_cmd, cwd = program_path)
+		server_proc = subprocess.Popen(plot_cmd, cwd = program_path)
+		atexit.register(shut_down, server_proc)
+
+def shut_down(proc):
+	proc.kill()

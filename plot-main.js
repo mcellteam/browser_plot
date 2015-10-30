@@ -292,6 +292,10 @@
 						enabled: plotFlags.markerEnabled
 					}
 				});
+
+				$('#series-list').append($('<option>')
+					.append(seriesName)
+					.attr("name", seriesName));
 			},
 			error: function() {
 				alert(path + " not found");
@@ -306,7 +310,6 @@
 	/* read files, add initial series */
 	function initData() {
 		var plotList;
-	
 		$.ajax({
 			type: "POST",
 			url: 'server.py',
@@ -322,15 +325,14 @@
 					var fname = plotList[i].fname;
 					var title = plotList[i].title;
 
-					$('#series-list').append($('<option>')
-						.append(title)
-						.attr("name", title));
 					addSeriesFromPath(title, fname);
 				}
 			},
 			error: function() {
 				alert("error getting file information");
 			}
+		}).done(function() {
+			chart.zoom();
 		});
 	}
 	
