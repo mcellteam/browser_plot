@@ -20,7 +20,7 @@ class MyServer(BaseHTTPRequestHandler):
 			self.send_header('Content-type', mimetype)
 			self.end_headers()
 			
-			f = open(os.curdir + os.sep + self.path)
+			f = open(os.curdir + os.sep + self.path, encoding="utf8")
 			self.wfile.write(bytes(f.read(), "UTF-8"))
 			f.close()
 		except IOError:
