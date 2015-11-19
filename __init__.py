@@ -1,16 +1,7 @@
 import os
-import sys
 import subprocess
-import shutil
 import atexit
 import signal
-
-def find_in_path(program_name):
-	for path in os.environ.get('PATH', '').split(os.pathsep):
-		full_name = os.path.join(path, program_name)
-		if os.path.exists(full_name) and not os.path.isdir(full_name):
-			return full_name
-	return None
 
 def get_name():
 	return ("Browser Plotter")
@@ -18,10 +9,8 @@ def get_name():
 def requirements_met():
 	return True
 
-def plot(data_path, plot_spec):
+def plot(data_path, plot_spec, python_cmd):
 	program_path = os.path.dirname(__file__)
-	python_cmd = find_in_path("python3")
-	#python_cmd = shutil.which("python3", mode=os.X_OK)
 
 	if python_cmd is None:
 		print("Unable to plot: python not found in path")
