@@ -67,6 +67,8 @@ def run():
 		webbrowser.open('http://127.0.0.1:8000')
 		print('server running...')
 		httpd.serve_forever()
+	except OSError:
+		webbrowser.open('http://127.0.0.1:8000')
 	except KeyboardInterrupt:
 		print('server terminated')
 
