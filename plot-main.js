@@ -181,6 +181,9 @@
 		$('.plot-range').change(function() {
 			xAxis.setExtremes($('#x-min').val(), $('#x-max').val());
 			yAxis.setExtremes($('#y-min').val(), $('#y-max').val());
+			/*if (!chart.resetZoomButton) {
+				chart.showResetZoom();
+			}*/
 		});
 	
 		var curBackground = chart.options.chart.backgroundColor;
@@ -458,7 +461,6 @@
 				if ($('#sheet-title').text() === seriesName) {
 					$('#sheet-title').text("No series selected");
 					$('#sheet-data tr').empty();
-					console.log($('#sheet-data'));
 				}
 			});
 	
