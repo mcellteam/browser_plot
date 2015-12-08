@@ -140,7 +140,6 @@
 								seriesOption.prop("selected", true);
 							}
 							$('#series-list').change();
-
 							changeSpreadsheetSeries(this.name);
 	                    },
 						hide: function(e) {
@@ -152,17 +151,9 @@
 						show: function(e) {
 							triggerSetExtremes();
 						}
-	                },
-					point: {
-						events: {
-							click: function() {
-								$('#sheet-series-x').val(this.x);
-								$('#sheet-series-x').change();
-							}
-						}
-					}
+	                }
 	            }
-	        },
+	        }
 		});
 	}
 	
@@ -181,9 +172,9 @@
 		$('.plot-range').change(function() {
 			xAxis.setExtremes($('#x-min').val(), $('#x-max').val());
 			yAxis.setExtremes($('#y-min').val(), $('#y-max').val());
-			/*if (!chart.resetZoomButton) {
+			if (!chart.resetZoomButton) {
 				chart.showResetZoom();
-			}*/
+			}
 		});
 	
 		var curBackground = chart.options.chart.backgroundColor;
@@ -334,9 +325,7 @@
 			error: function() {
 				alert("error getting file information");
 			}
-		}).done(function() {
-			chart.zoom();
-		});
+		})
 	}
 	
 	/*********************************************
