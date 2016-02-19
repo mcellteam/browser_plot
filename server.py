@@ -4,6 +4,7 @@ import mimetypes
 import json
 import sys
 import webbrowser
+import glob
 
 class MyServer(BaseHTTPRequestHandler):
 	def do_GET(self):
@@ -11,16 +12,15 @@ class MyServer(BaseHTTPRequestHandler):
 			self.path = '/plot-main.html'
 
 		try:
-			if self.path.endswith('.dat'):
-				#change path if requesting series data
-				self.path = os.path.relpath(sys.argv[1] + os.sep + self.path)
+			if not self.path.endswith('.dat'):
+				self.path = os.curdir + os.sep + self.path
 
 			self.send_response(200)
 			mimetype, _ = mimetypes.guess_type(self.path)
 			self.send_header('Content-type', mimetype)
 			self.end_headers()
 			
-			f = open(os.curdir + os.sep + self.path, encoding="utf8")
+			f = open(self.path, encoding="utf8")
 			self.wfile.write(bytes(f.read(), "UTF-8"))
 			f.close()
 		except IOError:
@@ -48,13 +48,17 @@ def to_plot_spec(args):
 			spec["xlabel"] = cmd[7:]
 		elif cmd[0:7] == "ylabel=":
 			spec["ylabel"] = cmd[7:]
-		elif cmd == "plot":
-			plot_list += [{}]
-			cur_plot_index += 1
-		elif cmd[0:6] == "title=":
-			plot_list[cur_plot_index]["title"] = cmd[6:]
-		elif cmd[0:2] == "f=":
-			plot_list[cur_plot_index]["fname"] = cmd[2:]
+		elif cmd.startswith("tf="):
+			with open(cmd[3:]) as tf:
+				path = tf.readline()
+				pathlen = len(path)+1
+				path += "/seed_*/*.dat"
+				for filename in glob.iglob(path):
+					plot_list += [{}]
+					cur_plot_index += 1
+					plot_list[cur_plot_index]["title"] = filename[pathlen:]
+					plot_list[cur_plot_index]["fname"] = filename
+
 
 	spec["plotList"] = plot_list
 	return json.dumps(spec)
@@ -68,6 +72,7 @@ def run():
 		print('server running...')
 		httpd.serve_forever()
 	except OSError:
+		print('server is already running')
 		webbrowser.open('http://127.0.0.1:8000')
 	except KeyboardInterrupt:
 		print('server terminated')
