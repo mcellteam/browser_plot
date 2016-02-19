@@ -22,6 +22,7 @@
 
 (function() {
 	var chart;
+	var seriesNames = [];
 
 	var plotFlags = {
 		type: 'line',
@@ -38,6 +39,11 @@
 		initExpandable();
 		initSpreadsheet();
 		otherPlots();
+	});
+
+	$(document).ajaxStop(function() {
+		// sort, populate series list
+		chart.zoom();
 	});
 	
 	/* window settings */
@@ -287,6 +293,7 @@
 					}
 				});
 
+				// add to seriesNames
 				$('#series-list').append($('<option>')
 					.append(seriesName)
 					.attr("name", seriesName));
@@ -294,8 +301,6 @@
 			error: function() {
 				alert(path + " not found");
 			}
-		}).done(function() {
-			chart.zoom();
 		});
 	}
 	
@@ -357,7 +362,6 @@
 		}
 	}
 	
-	
 	/* update series data on file change */
 	function changeSeriesFromFile() {
 		var files = ($('#series-data'))[0].files;
@@ -385,33 +389,6 @@
 		f.readAsText(files[0]);
 	}
 	
-	function addSeriesFromFile(file) {
-		var reader = new FileReader();
-		reader.onload = function(e) {
-			var content = e.target.result;
-			var seriesData = parseContent(content);
-			var defaultSeriesName = file.name;
-	
-			/* todo: check for duplicates and invalid data */
-			var newSeries = {
-				id: defaultSeriesName,
-				name: defaultSeriesName,
-				data: seriesData,
-				type: plotFlags.type,
-				marker: {
-					enabled: plotFlags.markerEnabled
-				}
-			};
-			chart.addSeries(newSeries);
-	
-			$('#series-list').append($('<option selected>')
-				.append(defaultSeriesName)
-				.attr("name", defaultSeriesName));
-			$('#series-list').change();
-		}
-		reader.readAsText(file);
-	}
-	
 	/*********************************************
 		functions for series sidebar follow
 	*********************************************/
@@ -433,9 +410,20 @@
 			$('#series-list option').removeProp("selected");
 	
 			var fileList = ($('#add-series'))[0].files;
-			for (var i = 0; i < fileList.length; i++) {
-				addSeriesFromFile(fileList[i]);
-			}
+			var numFiles = fileList.length;
+			var numLoaded = 0;
+			$.each(fileList, function(_, file) {
+				var reader = new FileReader();
+				reader.onload = function(e) {
+					loadFile(e, file);
+					numLoaded++;
+
+					if (numLoaded === numFiles) {
+						// sort, repopulate
+					}
+				}
+				reader.readAsText(file);
+			});
 			$('#add-series').val('');
 		});
 	
@@ -469,6 +457,31 @@
 				chart.get(seriesName).hide();
 			});
 		});
+	}
+
+	function loadFile(e, file) {
+		var content = e.target.result;
+		var seriesData = parseContent(content);
+		var defaultSeriesName = file.name;
+			
+		/* TODO: check for duplicates and invalid data */
+		var newSeries = {
+			id: defaultSeriesName,
+			name: defaultSeriesName,
+			data: seriesData,
+			type: plotFlags.type,
+			marker: {
+				enabled: plotFlags.markerEnabled
+			}
+		};
+		
+		chart.addSeries(newSeries);
+			
+		// instead, push to seriesNames
+		$('#series-list').append($('<option selected>')
+			.append(defaultSeriesName)
+			.attr("name", defaultSeriesName));
+			$('#series-list').change();
 	}
 	
 	/* on series select */
@@ -663,5 +676,4 @@
 			}
 		});
 	}
-
 })();
