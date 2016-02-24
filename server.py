@@ -12,8 +12,7 @@ class MyServer(BaseHTTPRequestHandler):
 			self.path = '/plot-main.html'
 
 		try:
-			if not self.path.endswith('.dat'):
-				self.path = os.curdir + os.sep + self.path
+			self.path = os.curdir + os.sep + self.path
 
 			self.send_response(200)
 			mimetype, _ = mimetypes.guess_type(self.path)
@@ -57,7 +56,7 @@ def to_plot_spec(args):
 					plot_list += [{}]
 					cur_plot_index += 1
 					plot_list[cur_plot_index]["title"] = filename[pathlen:]
-					plot_list[cur_plot_index]["fname"] = filename
+					plot_list[cur_plot_index]["fname"] = os.path.relpath(filename)
 
 
 	spec["plotList"] = plot_list
