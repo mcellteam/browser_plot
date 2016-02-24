@@ -100,7 +100,7 @@ html, body {
 /* selection list */
 #series-view #series-list {
 	margin-top: 10px;
-	width: 125px;
+	width: 90%;
 	height: 50%;
 }
 

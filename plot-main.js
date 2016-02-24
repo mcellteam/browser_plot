@@ -22,7 +22,7 @@
 
 (function() {
 	var chart;
-	var seriesNames = [];
+	var seriesNameList = [];
 
 	var plotFlags = {
 		type: 'line',
@@ -43,6 +43,7 @@
 
 	$(document).ajaxStop(function() {
 		// sort, populate series list
+		repopulateSeriesList();
 		chart.zoom();
 	});
 	
@@ -293,10 +294,8 @@
 					}
 				});
 
-				// add to seriesNames
-				$('#series-list').append($('<option>')
-					.append(seriesName)
-					.attr("name", seriesName));
+				// add to seriesNameList
+				seriesNameList.push(seriesName);
 			},
 			error: function() {
 				alert(path + " not found");
@@ -350,11 +349,19 @@
 			id: newName,
 			name: newName
 		});
-	
+		
+		// reflect in seriesNameList
+		var prevNameIndex = findName(prevName);
+		seriesNameList.splice(prevNameIndex, 1);
+
+		seriesNameList.push(newName);
+
+		// sort, repopulate
+		repopulateSeriesList();
+		
 		$('#series-name').val(newName);
-		$('#series-list option[name="' + prevName + '"]')
-			.attr("name", newName)
-			.text(newName);
+		$('#series-list option[name="' + newName + '"]')
+			.prop("selected", true);
 
 		// reflect in spreadsheet
 		if ($('#sheet-title').text() === prevName) {
@@ -419,7 +426,7 @@
 					numLoaded++;
 
 					if (numLoaded === numFiles) {
-						// sort, repopulate
+						repopulateSeriesList();
 					}
 				}
 				reader.readAsText(file);
@@ -433,6 +440,10 @@
 	
 			$.each(selectedOptions, function(_, seriesName) {
 				chart.get(seriesName).remove();
+
+				// reflect in seriesNames
+				var prevNameIndex = findName(seriesName);
+				seriesNameList.splice(prevNameIndex, 1);
 
 				// reflect in spreadsheet if necessary
 				if ($('#sheet-title').text() === seriesName) {
@@ -477,11 +488,8 @@
 		
 		chart.addSeries(newSeries);
 			
-		// instead, push to seriesNames
-		$('#series-list').append($('<option selected>')
-			.append(defaultSeriesName)
-			.attr("name", defaultSeriesName));
-			$('#series-list').change();
+		// instead, push to seriesNameList
+		seriesNameList.push(defaultSeriesName);
 	}
 	
 	/* on series select */
@@ -596,12 +604,14 @@
 				enabled: plotFlags.markerEnabled
 			}
 		};
+		
 		chart.addSeries(newSeries);
+			
+		// reflect in seriesNameList
+		seriesNameList.push(defaultSeriesName);
+		repopulateSeriesList();
+		$('#series-list option[name="' + defaultSeriesName + '"]').prop("selected", true);
 	
-		$('#series-list option').removeAttr("selected");
-		$('#series-list').append($('<option selected>')
-			.append(defaultSeriesName)
-			.attr("name", defaultSeriesName));
 		$('#series-list').change();
 	}
 
@@ -674,6 +684,29 @@
 			} else {
 				$('.sheet-search-error').css('visibility', 'visible');
 			}
+		});
+	}
+
+	/*******************************
+	** series name list functions **
+	*******************************/
+
+	function findName(reqName) {
+		for (var i = 0; i < seriesNameList.length; i++) {
+			if (seriesNameList[i] === reqName)
+				return i;
+		}
+		return -1;
+	}
+
+	function repopulateSeriesList() {
+		seriesNameList.sort();
+
+		$('#series-list').empty();
+		$.each(seriesNameList, function(_, seriesName) {
+			$('#series-list').append($('<option>')
+				.append(seriesName)
+				.attr("name", seriesName));
 		});
 	}
 })();
