@@ -85,6 +85,10 @@ html, body {
 	background: #ededed;
 }
 
+#series-filter {
+	width: 70%;
+}
+
 #series-view .space {
 	margin-left: 5px;
 	font-size: 12px;

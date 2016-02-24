@@ -29,7 +29,7 @@
 		marker: null
 	}
 	
-	$(window).load(function () {
+	$(document).ready(function () {
 		initChart();
 		initData();
 		initSeriesList();
@@ -408,6 +408,10 @@
 				$('#series-list').change();
 			}
 		});
+
+		$('#series-filter').change(function() {
+			filterSeriesList($('#series-filter').val());
+		});
 	
 		$('#series-list').change(function() {
 			seriesSelected();
@@ -707,6 +711,28 @@
 			$('#series-list').append($('<option>')
 				.append(seriesName)
 				.attr("name", seriesName));
+		});
+	}
+
+	function isPrefix(word, sub) {
+		if (sub.length > word.length)
+			return false;
+
+		for (var i = 0; i < sub.length; i++) {
+			if (sub.charAt(i) != word.charAt(i))
+				return false;
+		}
+		return true;
+	}
+
+	function filterSeriesList(prefix) {
+		$('#series-list').empty();
+		$.each(seriesNameList, function(_, seriesName) {
+			if (isPrefix(seriesName, prefix)) {
+				$('#series-list').append($('<option>')
+					.append(seriesName)
+					.attr("name", seriesName));
+			}
 		});
 	}
 })();
